@@ -1,12 +1,12 @@
 
-=== Thu Jun 10 09:16:30 2021
+=== Thu Jun 10 10:42:58 2021
 
 Packages were changed.
 Update Mode: mergeDefaultDependencies
 
 The following packages were added:
   com.unity.collab-proxy@1.5.7
-  com.unity.ide.rider@3.0.6
+  com.unity.ide.rider@2.0.7
   com.unity.ide.visualstudio@2.0.8
   com.unity.ide.vscode@1.2.3
   com.unity.modules.ai@1.0.0
@@ -42,9 +42,9 @@ The following packages were added:
   com.unity.modules.xr@1.0.0
   com.unity.test-framework@1.1.24
   com.unity.textmeshpro@3.0.6
-  com.unity.timeline@1.5.5
+  com.unity.timeline@1.4.8
   com.unity.ugui@1.0.0
-  com.unity.visualscripting@1.6.1
 The following packages were updated:
-  com.unity.2d.animation from version 6.0.1 to 6.0.3
-  com.unity.2d.psdimporter from version 5.0.1 to 5.0.3
+  com.unity.2d.animation from version 5.0.1 to 5.0.5
+  com.unity.2d.psdimporter from version 4.0.1 to 4.0.2
+  com.unity.2d.spriteshape from version 5.0.1 to 5.1.2
