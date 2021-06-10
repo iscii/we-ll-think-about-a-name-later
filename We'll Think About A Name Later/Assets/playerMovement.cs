@@ -14,16 +14,16 @@ public class playerMovement : MonoBehaviour
     void Update()
     {
         if(Input.GetKey("w")){
-            gameObject.transform.Translate(new Vector2(0, 1));
+            gameObject.transform.Translate(new Vector2(0, 1) * Time.deltaTime);
         }
         if(Input.GetKey("a")){
-            gameObject.transform.Translate(new Vector2(-1, 0));
+            gameObject.transform.Translate(new Vector2(-1, 0) * Time.deltaTime);
         }
         if(Input.GetKey("s")){
-            gameObject.transform.Translate(new Vector2(0, -1));
+            gameObject.transform.Translate(new Vector2(0, -1) * Time.deltaTime);
         }
         if(Input.GetKey("d")){
-            gameObject.transform.Translate(new Vector2(-1, 0));
+            gameObject.transform.Translate(new Vector2(1, 0) * Time.deltaTime);
         }
     }
 }
