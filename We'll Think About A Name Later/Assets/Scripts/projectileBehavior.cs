@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class projectileBehavior : MonoBehaviour
 {
-    int ms;
+    public static int shots = 0, shotsToChange = 5, playerShotSpeed = 7, bossShotSpeed = 3;
     // Start is called before the first frame update
     void Start()
     {
@@ -14,16 +14,25 @@ public class projectileBehavior : MonoBehaviour
             break;
             case "Boss Projectile":
                 transform.Rotate(0, 0, -90);
+                shots++;
+                if(shots == shotsToChange && bossShotSpeed <= 11) {
+                    bossShotSpeed += 2;
+                }
             break;
         }
-        ms = 7;
     }
 
     // Update is called once per frame
     void Update()
     {
-        //gameObject.transform.Translate(new Vector2(1, 0) * ms * Time.deltaTime);
-
+        switch(gameObject.tag) {
+            case "Player Projectile":
+                gameObject.transform.Translate(new Vector2(1, 0) * playerShotSpeed * Time.deltaTime);
+            break;
+            case "Boss Projectile":
+                gameObject.transform.Translate(new Vector2(1, 0) * bossShotSpeed * Time.deltaTime);
+            break;
+        }
         //out of bounds optimization
         if(Mathf.Abs(gameObject.transform.position.x) > 30 || Mathf.Abs(gameObject.transform.position.y) > 30){
             Destroy(gameObject);
