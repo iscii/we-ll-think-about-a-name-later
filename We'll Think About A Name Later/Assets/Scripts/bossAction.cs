@@ -20,6 +20,7 @@ public class bossAction : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         projectile = Resources.Load<GameObject>("Prefabs/ProjectileBoss");
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        phaseRequirement = new ArrayList();
         lastShot = Time.time;
         initializePhase();
     }
@@ -40,29 +41,30 @@ public class bossAction : MonoBehaviour
                 }
             }
             phase = Random.Range(0, idx);
-            switch(phase) {
-                case 0:
-                    phase1();
-                break;
-            }
+            Debug.Log(phase);
             phaseDone = false;
+        }
+        switch(phase) {
+            case 0:
+                phase1();
+            break;
         }
     }
 
     void phase1() {
-        while(!phaseDone) {
-            if(Time.time - lastShot > shotIntervals[shotIdx]) {
-                transform.position = new Vector2(player.transform.position.x, transform.position.y);
-                Instantiate(projectile, new Vector3(transform.position.x, transform.position.y - Mathf.Ceil(spriteRenderer.bounds.size.y/2) - 0.1f, transform.position.z), transform.rotation);
-                shots++;
-                lastShot = Time.time;
-                if(shots == shotsToChange && shotIdx < shotIntervals.Length - 1) {
-                    shots = 0;
-                    shotIdx++;
-                }
-                if(shotIdx >= 25)
-                phaseDone = true;
+        if(Time.time - lastShot > shotIntervals[shotIdx]) {
+            transform.position = new Vector2(player.transform.position.x, transform.position.y);
+            Instantiate(projectile, new Vector3(transform.position.x, transform.position.y - Mathf.Ceil(spriteRenderer.bounds.size.y/2) - 0.1f, transform.position.z), transform.rotation);
+            shots++;
+            lastShot = Time.time;
+            if(shots == shotsToChange && shotIdx < shotIntervals.Length - 1) {
+                shots = 0;
+                shotIdx++;
             }
+            Debug.Log(shotIdx); //shotIdx goes up to 4 after a while
+            if(shotIdx >= 25)
+                phaseDone = true;
+            
         }
     }
 }

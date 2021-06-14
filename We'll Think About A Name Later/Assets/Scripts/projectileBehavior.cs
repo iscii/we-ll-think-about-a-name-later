@@ -52,7 +52,6 @@ public class projectileBehavior : MonoBehaviour
         gameObject.GetComponent<SpriteRenderer>().sprite = hitSprite;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = hitAnimator;
         Destroy(gameObject.GetComponent<CapsuleCollider2D>());
-
         switch(other.gameObject.tag){
             case "Boss":
                 //Debug.Log("Boss--");
