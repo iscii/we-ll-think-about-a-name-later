@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class bossAction : MonoBehaviour
 {
-    public int shots = 0, shotsToChange = 5, shotIdx = 0;
+    public int shots = 0, shotsToChange = 5;
+    int phase, shotIdx = 0;
     ArrayList phaseRequirement;
     float[] shotIntervals = {1.25f, 1f, 0.75f, 0.5f, 0.25f};
     float lastShot;
+    bool phaseDone = true;
     GameObject player;
     GameObject projectile;
     SpriteRenderer spriteRenderer;
@@ -23,20 +25,43 @@ public class bossAction : MonoBehaviour
     }
 
     void initializePhase() {
-        
+        phaseRequirement.Add(0);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Time.time - lastShot > shotIntervals[shotIdx]) {
-            transform.position = new Vector2(player.transform.position.x, transform.position.y);
-            Instantiate(projectile, new Vector3(transform.position.x, transform.position.y - Mathf.Ceil(spriteRenderer.bounds.size.y/2) - 0.1f, transform.position.z), transform.rotation);
-            shots++;
-            lastShot = Time.time;
-            if(shots == shotsToChange && shotIdx < shotIntervals.Length - 1) {
-                shots = 0;
-                shotIdx++;
+        if(phaseDone) {
+            int idx = 0;
+            for(int i=0; i<phaseRequirement.Count; i++) {
+                if(shots <= (int)(phaseRequirement[i])) {
+                    idx = i; 
+                    break;
+                }
+            }
+            phase = Random.Range(0, idx);
+            switch(phase) {
+                case 0:
+                    phase1();
+                break;
+            }
+            phaseDone = false;
+        }
+    }
+
+    void phase1() {
+        while(!phaseDone) {
+            if(Time.time - lastShot > shotIntervals[shotIdx]) {
+                transform.position = new Vector2(player.transform.position.x, transform.position.y);
+                Instantiate(projectile, new Vector3(transform.position.x, transform.position.y - Mathf.Ceil(spriteRenderer.bounds.size.y/2) - 0.1f, transform.position.z), transform.rotation);
+                shots++;
+                lastShot = Time.time;
+                if(shots == shotsToChange && shotIdx < shotIntervals.Length - 1) {
+                    shots = 0;
+                    shotIdx++;
+                }
+                if(shotIdx >= 25)
+                phaseDone = true;
             }
         }
     }
