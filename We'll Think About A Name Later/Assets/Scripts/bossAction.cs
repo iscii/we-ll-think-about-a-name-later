@@ -4,20 +4,26 @@ using UnityEngine;
 
 public class bossAction : MonoBehaviour
 {
+    public int shots = 0, shotsToChange = 5, shotIdx = 0;
+    ArrayList phaseRequirement;
+    float[] shotIntervals = {1.25f, 1f, 0.75f, 0.5f, 0.25f};
+    float lastShot;
     GameObject player;
     GameObject projectile;
     SpriteRenderer spriteRenderer;
-    int shotIdx;
-    double[] shotIntervals = {1.25, 1, 0.75, 0.5, 0.25};
-    double lastShot;
+    
     // Start is called before the first frame update
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player"); 
+        player = GameObject.FindGameObjectWithTag("Player");
         projectile = Resources.Load<GameObject>("Prefabs/ProjectileBoss");
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
-        shotIdx = 0;
         lastShot = Time.time;
+        initializePhase();
+    }
+
+    void initializePhase() {
+        
     }
 
     // Update is called once per frame
@@ -26,9 +32,10 @@ public class bossAction : MonoBehaviour
         if(Time.time - lastShot > shotIntervals[shotIdx]) {
             transform.position = new Vector2(player.transform.position.x, transform.position.y);
             Instantiate(projectile, new Vector3(transform.position.x, transform.position.y - Mathf.Ceil(spriteRenderer.bounds.size.y/2) - 0.1f, transform.position.z), transform.rotation);
+            shots++;
             lastShot = Time.time;
-            if(projectileBehavior.shots == projectileBehavior.shotsToChange && shotIdx < shotIntervals.Length - 1) {
-                projectileBehavior.shots = 0;
+            if(shots == shotsToChange && shotIdx < shotIntervals.Length - 1) {
+                shots = 0;
                 shotIdx++;
             }
         }

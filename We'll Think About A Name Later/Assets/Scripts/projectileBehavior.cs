@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class projectileBehavior : MonoBehaviour
 {
-    public static int shots = 0, shotsToChange = 5, playerShotSpeed = 7, bossShotSpeed = 3;
+    static int playerShotSpeed = 10, bossShotSpeed = 3;
+    bool isHit = false;
+    GameObject player, boss;
     Sprite hitSprite;
     RuntimeAnimatorController hitAnimator;
-    bool isHit = false;
     // Start is called before the first frame update
     void Start()
     {
+        player = GameObject.FindGameObjectWithTag("Player");
+        boss = GameObject.FindGameObjectWithTag("Boss");
         hitSprite = Resources.Load<Sprite>("Warped Shooting Fx/Pixel Art/Hits/Hit-4/hits-4-1");
         hitAnimator = Resources.Load<RuntimeAnimatorController>("Warped Shooting Fx/Pixel Art/Hits/Hit-4/hits-4-1 (1)");
         switch(gameObject.tag){
@@ -19,8 +22,7 @@ public class projectileBehavior : MonoBehaviour
             break;
             case "Boss Projectile":
                 transform.Rotate(0, 0, -90);
-                shots++;
-                if(shots == shotsToChange && bossShotSpeed <= 11) {
+                if(boss.GetComponent<bossAction>().shots == boss.GetComponent<bossAction>().shotsToChange && bossShotSpeed <= 11) {
                     bossShotSpeed += 2;
                 }
             break;
@@ -30,9 +32,10 @@ public class projectileBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        switch(gameObject.tag) {
+        switch(gameObject.tag) { //can be revised to less lines with ternary for shotspeed
             case "Player Projectile":
-                gameObject.transform.Translate(new Vector2(1, 0) * playerShotSpeed * Time.deltaTime);
+                if(!isHit)
+                    gameObject.transform.Translate(new Vector2(1, 0) * playerShotSpeed * Time.deltaTime);
             break;
             case "Boss Projectile":
                 if(!isHit)
@@ -45,33 +48,26 @@ public class projectileBehavior : MonoBehaviour
         }
     }
     private void OnCollisionEnter2D(Collision2D other) {
+        isHit = true;
+        gameObject.GetComponent<SpriteRenderer>().sprite = hitSprite;
+        gameObject.GetComponent<Animator>().runtimeAnimatorController = hitAnimator;
+        Destroy(gameObject.GetComponent<CapsuleCollider2D>());
+
         switch(other.gameObject.tag){
             case "Boss":
                 //Debug.Log("Boss--");
-                Destroy(gameObject);
             break; 
             //based on boss projectile
             case "Player":
-                //Debug.Log("Player--");
-                Destroy(gameObject);
+                player.GetComponent<playerAction>().takeDamage();
             break;
             case "Player Projectile": 
-                //case "Boss Projectile":
-                /* idea: if boss projectiles collide with each other, they get buffed
-                if(other.gameObject.tag == "Boss Projectile" && gameObject.tag != "Boss Projectile")
-                if(other.gameObject.tag == "Player Projectile" && gameObject.tag != "Player Projectile") */
-
                 //Debug.Log("Destroy Projectiles");
-                isHit = true;
-                gameObject.GetComponent<SpriteRenderer>().sprite = hitSprite;
-                gameObject.GetComponent<Animator>().runtimeAnimatorController = hitAnimator;
-                Destroy(gameObject.GetComponent<CapsuleCollider2D>());
                 Destroy(other.gameObject);
             break;
         }
     }
     void Disappear(){ //to be used in animation event
-        Debug.Log("disappear");
         Destroy(gameObject);
     }
 }

@@ -4,19 +4,16 @@ using UnityEngine;
 
 public class playerAction : MonoBehaviour
 {
-    int ms;
+    int ms = 5, hp = 4;
     GameObject proj;
     SpriteRenderer spriteRenderer;
-    double lastRotateInput, lastShotInput, timeBetweenInputs, shotInterval;
+    float lastRotateInput, lastShotInput, timeBetweenInputs = 0.2f, shotInterval = 0.5f;
     // Start is called before the first frame update
     void Start()
     {
-        ms = 5;
         proj = Resources.Load<GameObject>("Prefabs/playerProjectile");
         spriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
         lastRotateInput = Time.time;
-        timeBetweenInputs = 0.2;
-        shotInterval = 0.5;
     }
 
     // Update is called once per frame
@@ -58,5 +55,12 @@ public class playerAction : MonoBehaviour
                 lastShotInput = Time.time;
             }
         }
+    }
+
+    public void takeDamage(){
+        hp--;
+        Debug.Log("Player HP: " + hp);
+        if(hp <= 0)
+            Debug.Log("You have died");
     }
 }
