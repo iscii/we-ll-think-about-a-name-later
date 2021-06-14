@@ -5,9 +5,14 @@ using UnityEngine;
 public class projectileBehavior : MonoBehaviour
 {
     public static int shots = 0, shotsToChange = 5, playerShotSpeed = 7, bossShotSpeed = 3;
+    Sprite hitSprite;
+    RuntimeAnimatorController hitAnimator;
+    bool isHit = false;
     // Start is called before the first frame update
     void Start()
     {
+        hitSprite = Resources.Load<Sprite>("Warped Shooting Fx/Pixel Art/Hits/Hit-4/hits-4-1");
+        hitAnimator = Resources.Load<RuntimeAnimatorController>("Warped Shooting Fx/Pixel Art/Hits/Hit-4/hits-4-1 (1)");
         switch(gameObject.tag){
             case "Player Projectile":
                 transform.Rotate(0, 0, 90); //sprite is rotated -90
@@ -30,7 +35,8 @@ public class projectileBehavior : MonoBehaviour
                 gameObject.transform.Translate(new Vector2(1, 0) * playerShotSpeed * Time.deltaTime);
             break;
             case "Boss Projectile":
-                gameObject.transform.Translate(new Vector2(1, 0) * bossShotSpeed * Time.deltaTime);
+                if(!isHit)
+                    gameObject.transform.Translate(new Vector2(1, 0) * bossShotSpeed * Time.deltaTime);
             break;
         }
         //out of bounds optimization
@@ -40,23 +46,32 @@ public class projectileBehavior : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D other) {
         switch(other.gameObject.tag){
-            case "Player":
-                Debug.Log("Player--");
-                //Destroy(gameObject);
-            break;
             case "Boss":
-                Debug.Log("Boss--");
-                //Destroy(gameObject);
+                //Debug.Log("Boss--");
+                Destroy(gameObject);
             break; 
-            case "Boss Projectile":
+            //based on boss projectile
+            case "Player":
+                //Debug.Log("Player--");
+                Destroy(gameObject);
+            break;
             case "Player Projectile": 
-                //idea: if boss projectiles collide with each other, they get buffed
-                //if(other.gameObject.tag == "Boss Projectile" && gameObject.tag != "Boss Projectile")
-                //if(other.gameObject.tag == "Player Projectile" && gameObject.tag != "Player Projectile")
-                Debug.Log("Destroy Projectiles");
-                //Destroy(other.gameObject);
-                //Destroy(gameObject); 
+                //case "Boss Projectile":
+                /* idea: if boss projectiles collide with each other, they get buffed
+                if(other.gameObject.tag == "Boss Projectile" && gameObject.tag != "Boss Projectile")
+                if(other.gameObject.tag == "Player Projectile" && gameObject.tag != "Player Projectile") */
+
+                //Debug.Log("Destroy Projectiles");
+                isHit = true;
+                gameObject.GetComponent<SpriteRenderer>().sprite = hitSprite;
+                gameObject.GetComponent<Animator>().runtimeAnimatorController = hitAnimator;
+                Destroy(gameObject.GetComponent<CapsuleCollider2D>());
+                Destroy(other.gameObject);
             break;
         }
+    }
+    void Disappear(){ //to be used in animation event
+        Debug.Log("disappear");
+        Destroy(gameObject);
     }
 }
