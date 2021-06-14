@@ -37,4 +37,4 @@ sysinfo.txt
 *.unitypackage
 
 # Own
-[Ll]ogs/
+Logs/AssetImportWorker0.log
