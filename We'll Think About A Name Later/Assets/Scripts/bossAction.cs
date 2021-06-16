@@ -42,7 +42,7 @@ public class bossAction : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Time.time - time >= 0.1f && !canMove)
+        if (Time.time - time >= 0.05f && !canMove)
         {
             transform.position = new Vector2(transform.position.x, transform.position.y - 0.01f);
             if (transform.position.y <= camHeight)
