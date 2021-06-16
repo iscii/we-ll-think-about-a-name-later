@@ -37,7 +37,7 @@ public class bossAction : MonoBehaviour
     {
         phaseRequirement.Add(0); //phase1
         phaseRequirement.Add(1); //phase2
-        //phaseRequirement.Add(2); //phase3
+        phaseRequirement.Add(2); //phase3
     }
 
     // Update is called once per frame
@@ -53,7 +53,7 @@ public class bossAction : MonoBehaviour
         {
             if (phaseDone)
             {
-                int idx = 0;
+                /*int idx = 0;
                 for (int i = 0; i < phaseRequirement.Count; i++)
                 {
                     if (totalPhases < (int)(phaseRequirement[i]))
@@ -62,7 +62,8 @@ public class bossAction : MonoBehaviour
                     }
                     idx++;
                 }
-                phase = Random.Range(0, idx);
+                phase = Random.Range(0, idx);*/
+                phase = 2;
                 if (phase == 0)
                 {
                     phase1BounceCount = 0;
@@ -79,16 +80,14 @@ public class bossAction : MonoBehaviour
                 case 1:
                     phase2();
                     break;
-                /*case 2:
+                case 2:
                     phase3();
                     break;
-                */
             }
         }
     }
 
     // Starts at the middle, and goes randomly to left or right, while shooting at the same time
-    //bool ifBeg = true
     void phase1(int ms)
     {
         transform.Translate(new Vector2(left ? -1 : 1, 0) * ms * Time.deltaTime);
@@ -99,10 +98,8 @@ public class bossAction : MonoBehaviour
         }
         if (phase1BounceCount < 2)
         {
-            Debug.Log("bouncable");
             if (Mathf.Abs(transform.position.x) >= camWidth)
             {
-                Debug.Log("bounce");
                 transform.position = new Vector2(camWidth * (left ? -1 : 1) + (left ? 0.1f : -0.1f), transform.position.y);
                 left = !left;
                 phase1BounceCount++;
@@ -139,7 +136,6 @@ public class bossAction : MonoBehaviour
                     shotsToChange *= 2; //makes the last subphase shoot twice the amount of shots to make it harder
                 }
             }
-            //Debug.Log(shotIdx); //shotIdx goes up to 4 after a while
             if (shotIdx >= shotIntervals.Length)
             {
                 shotIdx = 0;
@@ -150,9 +146,29 @@ public class bossAction : MonoBehaviour
         }
     }
 
-    /*//Randomly rotates around the screen, trying to hit the player through surprise 
+    //Randomly teleport around the screen, trying to hit the player through surprise 
     void phase3() {
-
+        if(Time.time - time >= shotIntervals[shotIdx + 2]) {    
+            int side = Random.Range(0, 4);
+            switch(side) {
+                case 0:
+                    transform.SetPositionAndRotation(new Vector2(player.transform.position.x, camHeight), Quaternion.Euler(0, 0, 0));
+                    Instantiate(projectile, new Vector2(transform.position.x, transform.position.y - Mathf.Ceil(sr.bounds.size.y / 2) - 0.1f), transform.rotation);
+                break;
+                case 1:
+                    transform.SetPositionAndRotation(new Vector2(camWidth, player.transform.position.y), Quaternion.Euler(0, 0, 270));
+                    Instantiate(projectile, new Vector2(transform.position.x - Mathf.Ceil(sr.bounds.size.x / 2) - 0.1f, transform.position.y), transform.rotation);
+                break;
+                case 2:
+                    transform.SetPositionAndRotation(new Vector2(player.transform.position.x, -camHeight), Quaternion.Euler(0, 0, 180));
+                    Instantiate(projectile, new Vector2(transform.position.x, transform.position.y + Mathf.Ceil(sr.bounds.size.y / 2) + 0.1f), transform.rotation);
+                break;
+                case 3:
+                    transform.SetPositionAndRotation(new Vector2(-camWidth, player.transform.position.y), Quaternion.Euler(0, 0, 90));
+                    Instantiate(projectile, new Vector2(transform.position.x + Mathf.Ceil(sr.bounds.size.x / 2) + 0.1f, transform.position.y), transform.rotation);
+                break;
+            }
+            time = Time.time;
+        }
     }
-    */
 }

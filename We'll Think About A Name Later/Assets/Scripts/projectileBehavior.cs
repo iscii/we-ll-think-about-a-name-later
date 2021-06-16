@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class projectileBehavior : MonoBehaviour
 {
-    static int playerShotSpeed = 10, bossShotSpeed = 3;
+    static int playerShotSpeed = 9, bossShotSpeed = 3;
     bool isHit = false;
     GameObject player, boss;
     Sprite hitSprite;
@@ -48,11 +48,13 @@ public class projectileBehavior : MonoBehaviour
         }
     }
     private void OnCollisionEnter2D(Collision2D other) {
+        //play animation
         isHit = true;
         gameObject.transform.position = other.GetContact(0).point;
         gameObject.GetComponent<SpriteRenderer>().sprite = hitSprite;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = hitAnimator;
         Destroy(gameObject.GetComponent<CapsuleCollider2D>());
+
         switch(other.gameObject.tag){
             case "Boss":
                 //Debug.Log("Boss--");
