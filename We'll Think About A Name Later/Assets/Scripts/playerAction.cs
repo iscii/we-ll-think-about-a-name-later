@@ -62,9 +62,11 @@ public class playerAction : MonoBehaviour
             {
                 if (Time.time - lastShotInput > shotInterval)
                 {
+                    //normalize rotation, multiply
+                    Debug.Log(transform.GetChild(0).rotation.eulerAngles);
                     //fix rotation shooting
                     //multiply the size by the rotation vector (-1 or 1) when rotated.
-                    Instantiate(proj, new Vector3(transform.position.x, transform.position.y + Mathf.Ceil(playerSR.bounds.size.y/2) + 1f, transform.position.z), transform.GetChild(0).rotation);
+                    Instantiate(proj, new Vector3(transform.position.x, transform.position.y + Mathf.Ceil(playerSR.bounds.size.y/2) + 0.1f, transform.position.z), transform.GetChild(0).rotation);
                     lastShotInput = Time.time;
                 }
             }
