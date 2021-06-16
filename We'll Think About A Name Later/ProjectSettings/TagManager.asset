@@ -8,7 +8,6 @@ TagManager:
   - Player Projectile
   - Boss Projectile
   - Boss
-  - Player Child
   layers:
   - Default
   - TransparentFX
