@@ -57,16 +57,31 @@ public class playerAction : MonoBehaviour
                     lastRotateInput = Time.time;
                 }
             }
-
+   
             if (Input.GetKey("space"))
             {
                 if (Time.time - lastShotInput > shotInterval)
                 {
                     //normalize rotation, multiply
-                    Debug.Log(transform.GetChild(0).rotation.eulerAngles);
                     //fix rotation shooting
                     //multiply the size by the rotation vector (-1 or 1) when rotated.
-                    Instantiate(proj, new Vector3(transform.position.x, transform.position.y + Mathf.Ceil(playerSR.bounds.size.y/2) + 0.1f, transform.position.z), transform.GetChild(0).rotation);
+                    Debug.Log(playerSR.bounds.size.y);
+                    Debug.Log(playerSR.bounds.size.x);
+                    Debug.Log(transform.GetChild(0).rotation.eulerAngles.z);
+                    switch(transform.GetChild(0).rotation.eulerAngles.z){
+                        case 0:
+                            Instantiate(proj, new Vector3(transform.position.x, transform.position.y + Mathf.Ceil(playerSR.bounds.size.y/2) + 0.1f, transform.position.z), transform.GetChild(0).rotation);
+                        break;
+                        case 270:
+                            Instantiate(proj, new Vector3(transform.position.x + Mathf.Ceil(playerSR.bounds.size.y/2) + 0.1f, transform.position.y, transform.position.z), transform.GetChild(0).rotation);
+                        break;
+                        case 180:
+                            Instantiate(proj, new Vector3(transform.position.x, transform.position.y - Mathf.Ceil(playerSR.bounds.size.y/2) - 0.1f, transform.position.z), transform.GetChild(0).rotation);
+                        break;
+                        case 90:
+                            Instantiate(proj, new Vector3(transform.position.x - Mathf.Ceil(playerSR.bounds.size.y/2) - 0.1f, transform.position.y, transform.position.z), transform.GetChild(0).rotation);
+                        break;
+                    }
                     lastShotInput = Time.time;
                 }
             }

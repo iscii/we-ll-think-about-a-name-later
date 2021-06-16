@@ -7,7 +7,7 @@ public class bossAction : MonoBehaviour
     public int shots = 0, shotsToChange = 5;
     public bool canMove = false;
     int phase, totalPhases = 0, shotIdx = 0, phase1BounceCount;
-    float[] shotIntervals = { 1.25f, 1f, 0.75f, 0.5f, 0.25f };
+    float[] shotIntervals = { 2f, 1.5f, 1f, 0.75f, 0.5f };
     float time, camWidth, camHeight;
     bool phaseDone = true, left;
     Camera cam;
@@ -37,6 +37,7 @@ public class bossAction : MonoBehaviour
     {
         phaseRequirement.Add(0); //phase1
         phaseRequirement.Add(1); //phase2
+        //phaseRequirement.Add(2); //phase3
     }
 
     // Update is called once per frame
@@ -78,6 +79,10 @@ public class bossAction : MonoBehaviour
                 case 1:
                     phase2();
                     break;
+                /*case 2:
+                    phase3();
+                    break;
+                */
             }
         }
     }
@@ -141,4 +146,10 @@ public class bossAction : MonoBehaviour
             }
         }
     }
+
+    /*//Randomly rotates around the screen, trying to hit the player through surprise 
+    void phase3() {
+
+    }
+    */
 }
