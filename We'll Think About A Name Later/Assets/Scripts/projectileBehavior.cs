@@ -32,7 +32,7 @@ public class projectileBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /* switch(gameObject.tag) { //can be revised to less lines with ternary for shotspeed
+        switch(gameObject.tag) { //can be revised to less lines with ternary for shotspeed
             case "Player Projectile":
                 if(!isHit)
                     gameObject.transform.Translate(new Vector2(1, 0) * playerShotSpeed * Time.deltaTime);
@@ -41,7 +41,7 @@ public class projectileBehavior : MonoBehaviour
                 if(!isHit)
                     gameObject.transform.Translate(new Vector2(1, 0) * bossShotSpeed * Time.deltaTime);
             break;
-        } */
+        }
         //out of bounds optimization
         if(Mathf.Abs(gameObject.transform.position.x) > 30 || Mathf.Abs(gameObject.transform.position.y) > 30){
             Destroy(gameObject);
