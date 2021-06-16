@@ -57,9 +57,9 @@ public class bossAction : MonoBehaviour
                 {
                     if (totalPhases < (int)(phaseRequirement[i]))
                     {
-                        idx = i;
                         break;
                     }
+                    idx++;
                 }
                 phase = Random.Range(0, idx);
                 if (phase == 0)
