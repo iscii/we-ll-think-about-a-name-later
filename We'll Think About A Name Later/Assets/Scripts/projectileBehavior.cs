@@ -49,6 +49,7 @@ public class projectileBehavior : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D other) {
         isHit = true;
+        gameObject.transform.position = other.GetContact(0).point;
         gameObject.GetComponent<SpriteRenderer>().sprite = hitSprite;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = hitAnimator;
         Destroy(gameObject.GetComponent<CapsuleCollider2D>());
