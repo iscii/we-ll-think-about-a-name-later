@@ -99,8 +99,10 @@ public class bossAction : MonoBehaviour
         }
         if (phase1BounceCount < 2)
         {
+            Debug.Log("bouncable");
             if (Mathf.Abs(transform.position.x) >= Mathf.Abs(camWidth))
             {
+                Debug.Log("bounce");
                 left = !left;
                 phase1BounceCount++;
                 shotIdx++;

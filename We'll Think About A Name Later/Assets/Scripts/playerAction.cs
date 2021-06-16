@@ -58,33 +58,28 @@ public class playerAction : MonoBehaviour
                 }
             }
    
-            if (Input.GetKey("space"))
+            /* if (Input.GetKey("space"))
             {
                 if (Time.time - lastShotInput > shotInterval)
                 {
-                    //normalize rotation, multiply
-                    //fix rotation shooting
-                    //multiply the size by the rotation vector (-1 or 1) when rotated.
-                    Debug.Log(playerSR.bounds.size.y);
-                    Debug.Log(playerSR.bounds.size.x);
-                    Debug.Log(transform.GetChild(0).rotation.eulerAngles.z);
+                    //can prolly optimize this by finding a way to turn rotation into a relative position vector and multiplying the vector3 position parameeter with that.
                     switch(transform.GetChild(0).rotation.eulerAngles.z){
                         case 0:
-                            Instantiate(proj, new Vector3(transform.position.x, transform.position.y + Mathf.Ceil(playerSR.bounds.size.y/2) + 0.1f, transform.position.z), transform.GetChild(0).rotation);
+                            Instantiate(proj, new Vector3(transform.position.x, transform.position.y + playerSR.bounds.size.y/2 + 0.1f, transform.position.z), transform.GetChild(0).rotation);
                         break;
                         case 270:
-                            Instantiate(proj, new Vector3(transform.position.x + Mathf.Ceil(playerSR.bounds.size.y/2) + 0.1f, transform.position.y, transform.position.z), transform.GetChild(0).rotation);
+                            Instantiate(proj, new Vector3(transform.position.x + playerSR.bounds.size.y/2 + 0.1f, transform.position.y, transform.position.z), transform.GetChild(0).rotation);
                         break;
                         case 180:
-                            Instantiate(proj, new Vector3(transform.position.x, transform.position.y - Mathf.Ceil(playerSR.bounds.size.y/2) - 0.1f, transform.position.z), transform.GetChild(0).rotation);
+                            Instantiate(proj, new Vector3(transform.position.x, transform.position.y - playerSR.bounds.size.y/2 - 0.1f, transform.position.z), transform.GetChild(0).rotation);
                         break;
                         case 90:
-                            Instantiate(proj, new Vector3(transform.position.x - Mathf.Ceil(playerSR.bounds.size.y/2) - 0.1f, transform.position.y, transform.position.z), transform.GetChild(0).rotation);
+                            Instantiate(proj, new Vector3(transform.position.x - playerSR.bounds.size.y/2 - 0.1f, transform.position.y, transform.position.z), transform.GetChild(0).rotation);
                         break;
                     }
                     lastShotInput = Time.time;
                 }
-            }
+            } */
         }
     }
 
