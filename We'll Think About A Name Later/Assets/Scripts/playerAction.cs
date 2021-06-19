@@ -5,14 +5,19 @@ using UnityEngine;
 public class playerAction : MonoBehaviour
 {
     int ms = 5, hp = 5;
-    float lastRotateInput, lastShotInput, timeBetweenInputs = 0.2f, shotInterval = 0.5f;
+    float lastRotateInput, lastShotInput, timeBetweenInputs = 0.2f, shotInterval = 0.5f, camHeight, camWidth;
     Sprite[] hpSprites;
+    Camera cam;
     GameObject proj, boss;
     SpriteRenderer playerSR, hpSR;
 
     // Start is called before the first frame update
     void Start()
     {
+        cam = Camera.main;
+        camHeight = cam.orthographicSize; //10
+        camWidth = camHeight * cam.aspect;
+
         proj = Resources.Load<GameObject>("Prefabs/playerProjectile");
         boss = GameObject.FindGameObjectWithTag("Boss");
         playerSR = transform.GetChild(0).GetComponent<SpriteRenderer>();
@@ -32,22 +37,22 @@ public class playerAction : MonoBehaviour
         {
             if (!(Input.GetKey("w") && Input.GetKey("s")))
             {
-                if (Input.GetKey("w"))
+                if (Input.GetKey("w") && ((transform.position.y + playerSR.bounds.size.y/2) < camHeight))
                 {
                     transform.Translate(new Vector2(0, 1) * ms * Time.deltaTime);
                 }
-                if (Input.GetKey("s"))
+                if (Input.GetKey("s") && ((transform.position.y - playerSR.bounds.size.y/2) > (camHeight*-1)))
                 {
                     transform.Translate(new Vector2(0, -1) * ms * Time.deltaTime);
                 }
             }
             if (!(Input.GetKey("a") && Input.GetKey("d")))
             {
-                if (Input.GetKey("a"))
+                if (Input.GetKey("a") && ((transform.position.x - playerSR.bounds.size.x/2) > (camWidth*-1)))
                 {
                     transform.Translate(new Vector2(-1, 0) * ms * Time.deltaTime);
                 }
-                if (Input.GetKey("d"))
+                if (Input.GetKey("d") && ((transform.position.x + playerSR.bounds.size.x/2) < camWidth))
                 {
                     transform.Translate(new Vector2(1, 0) * ms * Time.deltaTime);
                 }

@@ -18,7 +18,7 @@ public class bossAction : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //gets the radius of the width and height of the camera view borders
+        //gets the width and height of the camera view borders
         cam = Camera.main;
         camHeight = cam.orthographicSize;
         camWidth = camHeight * cam.aspect;
@@ -53,7 +53,7 @@ public class bossAction : MonoBehaviour
         {
             if (phaseDone)
             {
-                /*int idx = 0;
+                int idx = 0;
                 for (int i = 0; i < phaseRequirement.Count; i++)
                 {
                     if (totalPhases < (int)(phaseRequirement[i]))
@@ -62,8 +62,8 @@ public class bossAction : MonoBehaviour
                     }
                     idx++;
                 }
-                phase = Random.Range(0, idx);*/
-                phase = 2;
+                phase = Random.Range(0, idx);
+                //phase = 2;
                 if (phase == 0)
                 {
                     phase1BounceCount = 0;
