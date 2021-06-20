@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class bossAction : MonoBehaviour
 {
-    public int shots = 0, shotsToChange = 5;
+    //public int shots = 0, shotsToChange = 5;
     public bool canMove = false;
-    int phase, totalPhases = 0, shotIdx = 0, phase1BounceCount;
-    float[] shotIntervals = { 2f, 1.5f, 1f, 0.75f, 0.5f };
-    float time, camWidth, camHeight;
-    bool phaseDone = true, left;
+    int shots, maxShots, phase, totalPhases, phase1BounceCount; //shotIdx
+    //float[] shotIntervals = { 2f, 1.5f, 1f, 0.75f, 0.5f };
+    float time, camWidth, camHeight, shotGap;
+    bool phaseDone, left, changeMaxShot;
     Camera cam;
-    ArrayList phaseRequirement;
+    //ArrayList phaseRequirement;
     GameObject player, projectile;
     SpriteRenderer sr;
 
@@ -26,19 +26,25 @@ public class bossAction : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         projectile = Resources.Load<GameObject>("Prefabs/ProjectileBoss");
         sr = gameObject.GetComponent<SpriteRenderer>();
-        phaseRequirement = new ArrayList();
+
+        shotGap = 1f;
+        phase = -1;
+        totalPhases = 3;
+        phaseDone = true;
+        changeMaxShot = true;
         time = Time.time;
-        initializePhase();
+        //phaseRequirement = new ArrayList();
+        //initializePhase();
 
         transform.position = new Vector2(player.transform.position.x, camHeight + Mathf.Ceil(sr.bounds.size.y / 2));
     }
 
-    void initializePhase()
+    /* void initializePhase()
     {
         phaseRequirement.Add(0); //phase1
         phaseRequirement.Add(1); //phase2
         phaseRequirement.Add(2); //phase3
-    }
+    } */
 
     // Update is called once per frame
     void Update()
@@ -53,7 +59,7 @@ public class bossAction : MonoBehaviour
         {
             if (phaseDone)
             {
-                int idx = 0;
+                /* int idx = 0;
                 for (int i = 0; i < phaseRequirement.Count; i++)
                 {
                     if (totalPhases < (int)(phaseRequirement[i]))
@@ -61,40 +67,49 @@ public class bossAction : MonoBehaviour
                         break;
                     }
                     idx++;
-                }
-                phase = Random.Range(0, idx);
-                //phase = 2;
+                } */
+                /* phase++;
+                phaseDone = false;
+                //phase = 0;
                 if (phase == 0)
                 {
                     phase1BounceCount = 0;
-                    left = Random.Range(0, 2) == 0;
-                    Debug.Log(left);
+                    left = Random.Range(0, 1) == 0; //changed from 2 to 1, I think it's inclusive
+                    //Debug.Log(left);
                 }
-                phaseDone = false;
+                if(phase == totalPhases) {
+                    phase = 0;
+                    transform.position = new Vector2(0, camHeight);
+                    //maybe implement a bool win to mark the end of this loop
+                } */
+                phase = 2;
             }
             switch (phase)
             {
                 case 0:
-                    phase1(3);
+                    phase0(5);
                     break;
                 case 1:
-                    phase2();
+                    determineMaxShot();
+                    phase1();
                     break;
                 case 2:
-                    phase3();
+                    determineMaxShot();
+                    phase2();
                     break;
             }
         }
     }
 
-    // Starts at the middle, and goes randomly to left or right, while shooting at the same time
-    void phase1(int ms)
+    // Starts at the middle, and goes randomly to left or right before traversing the other way, while shooting at the same time
+    void phase0(int bossMoveSpd)
     {
-        transform.Translate(new Vector2(left ? -1 : 1, 0) * ms * Time.deltaTime);
-        if (Time.time - time >= shotIntervals[shotIdx + 1])
+        transform.Translate(new Vector2(left ? -1 : 1, 0) * bossMoveSpd * Time.deltaTime);
+        if (Time.time - time >= shotGap)
         {
+            fireShot(false, new Vector2(transform.position.x, transform.position.y), new Vector2(transform.position.x, transform.position.y - Mathf.Ceil(sr.bounds.size.y / 2) - 0.1f), Quaternion.Euler(0, 0, 0));
+            //Instantiate(projectile, new Vector2(transform.position.x, transform.position.y - Mathf.Ceil(sr.bounds.size.y / 2) - 0.1f), transform.rotation);
             time = Time.time;
-            Instantiate(projectile, new Vector3(transform.position.x, transform.position.y - Mathf.Ceil(sr.bounds.size.y / 2) - 0.1f, transform.position.z), transform.rotation);
         }
         if (phase1BounceCount < 2)
         {
@@ -103,7 +118,7 @@ public class bossAction : MonoBehaviour
                 transform.position = new Vector2(camWidth * (left ? -1 : 1) + (left ? 0.1f : -0.1f), transform.position.y);
                 left = !left;
                 phase1BounceCount++;
-                shotIdx++;
+                //shotIdx++;
             }
         }
         else
@@ -111,22 +126,21 @@ public class bossAction : MonoBehaviour
             if (Mathf.Abs(transform.position.x) <= 0.1f)
             {
                 phaseDone = true;
-                totalPhases++;
-                shotIdx = 0;
+                //totalPhases++;
+                //shotIdx = 0;
             }
         }
     }
 
-    /*"Tracks" the player's position and shoot, slowly increases the time that the boss changes position, it's shooting speed,
-        and the gap between the shots */
-    void phase2()
+    //Tracks the player's position and shoot
+    void phase1()
     {
-        if (Time.time - time > shotIntervals[shotIdx])
+        if (Time.time - time >= shotGap)
         {
-            transform.position = new Vector2(player.transform.position.x, transform.position.y);
-            Instantiate(projectile, new Vector3(transform.position.x, transform.position.y - Mathf.Ceil(sr.bounds.size.y / 2) - 0.1f, transform.position.z), transform.rotation);
-            shots++;
-            time = Time.time;
+            fireShot(true, new Vector2(player.transform.position.x, transform.position.y), new Vector3(transform.position.x, transform.position.y - Mathf.Ceil(sr.bounds.size.y / 2) - 0.1f), Quaternion.Euler(0, 0, 0));
+            /* transform.position = new Vector2(player.transform.position.x, transform.position.y);
+            Instantiate(projectile, new Vector2(transform.position.x, transform.position.y - Mathf.Ceil(sr.bounds.size.y / 2) - 0.1f), transform.rotation); */
+            /*  shots++;
             if (shots == shotsToChange && shotIdx < shotIntervals.Length)
             {
                 shots = 0;
@@ -135,40 +149,77 @@ public class bossAction : MonoBehaviour
                 {
                     shotsToChange *= 2; //makes the last subphase shoot twice the amount of shots to make it harder
                 }
-            }
+            } 
             if (shotIdx >= shotIntervals.Length)
             {
                 shotIdx = 0;
                 shotsToChange /= 2;
                 phaseDone = true;
                 totalPhases++;
+            } */
+            shots++;
+            time = Time.time;
+            if(shots >= maxShots) {
+                shots = 0;
+                changeMaxShot = true;
+                phaseDone = true;
             }
         }
     }
 
     //Randomly teleport around the screen, trying to hit the player through surprise 
-    void phase3() {
-        if(Time.time - time >= shotIntervals[shotIdx + 2]) {    
-            int side = Random.Range(0, 4);
+    void phase2() {
+        if(Time.time - time >= shotGap) {    
+            int side = Random.Range(0, 3);
             switch(side) {
                 case 0:
-                    transform.SetPositionAndRotation(new Vector2(player.transform.position.x, camHeight), Quaternion.Euler(0, 0, 0));
-                    Instantiate(projectile, new Vector2(transform.position.x, transform.position.y - Mathf.Ceil(sr.bounds.size.y / 2) - 0.1f), transform.rotation);
+                    fireShot(true, new Vector2(player.transform.position.x, camHeight), new Vector2(transform.position.x, transform.position.y - Mathf.Ceil(sr.bounds.size.y / 2) - 0.1f), Quaternion.Euler(0, 0, 0));
+                    /* transform.SetPositionAndRotation(new Vector2(player.transform.position.x, camHeight), Quaternion.Euler(0, 0, 0));
+                    Instantiate(projectile, new Vector2(transform.position.x, transform.position.y - Mathf.Ceil(sr.bounds.size.y / 2) - 0.1f), transform.rotation); */
                 break;
                 case 1:
-                    transform.SetPositionAndRotation(new Vector2(camWidth, player.transform.position.y), Quaternion.Euler(0, 0, 270));
-                    Instantiate(projectile, new Vector2(transform.position.x - Mathf.Ceil(sr.bounds.size.x / 2) - 0.1f, transform.position.y), transform.rotation);
+                    fireShot(true, new Vector2(camWidth, player.transform.position.y), new Vector2(transform.position.x - Mathf.Ceil(sr.bounds.size.x / 2) - 0.1f, transform.position.y), Quaternion.Euler(0, 0, 270));
+                    /* transform.SetPositionAndRotation(new Vector2(camWidth, player.transform.position.y), Quaternion.Euler(0, 0, 270));
+                    Instantiate(projectile, new Vector2(transform.position.x - Mathf.Ceil(sr.bounds.size.x / 2) - 0.1f, transform.position.y), transform.rotation); */
                 break;
                 case 2:
-                    transform.SetPositionAndRotation(new Vector2(player.transform.position.x, -camHeight), Quaternion.Euler(0, 0, 180));
-                    Instantiate(projectile, new Vector2(transform.position.x, transform.position.y + Mathf.Ceil(sr.bounds.size.y / 2) + 0.1f), transform.rotation);
+                    fireShot(true, new Vector2(player.transform.position.x, -camHeight), new Vector2(transform.position.x, transform.position.y + Mathf.Ceil(sr.bounds.size.y / 2) + 0.1f), Quaternion.Euler(0, 0, 180));
+                    /* transform.SetPositionAndRotation(new Vector2(player.transform.position.x, -camHeight), Quaternion.Euler(0, 0, 180));
+                    Instantiate(projectile, new Vector2(transform.position.x, transform.position.y + Mathf.Ceil(sr.bounds.size.y / 2) + 0.1f), transform.rotation); */
                 break;
                 case 3:
-                    transform.SetPositionAndRotation(new Vector2(-camWidth, player.transform.position.y), Quaternion.Euler(0, 0, 90));
-                    Instantiate(projectile, new Vector2(transform.position.x + Mathf.Ceil(sr.bounds.size.x / 2) + 0.1f, transform.position.y), transform.rotation);
+                    fireShot(true, new Vector2(-camWidth, player.transform.position.y), new Vector2(transform.position.x + Mathf.Ceil(sr.bounds.size.x / 2) + 0.1f, transform.position.y), Quaternion.Euler(0, 0, 90));
+                    /* transform.SetPositionAndRotation(new Vector2(-camWidth, player.transform.position.y), Quaternion.Euler(0, 0, 90));
+                    Instantiate(projectile, new Vector2(transform.position.x + Mathf.Ceil(sr.bounds.size.x / 2) + 0.1f, transform.position.y), transform.rotation); */
                 break;
             }
+            shots++;
             time = Time.time;
+            if(shots >= maxShots) {
+                shots = 0;
+                changeMaxShot = true;
+                phaseDone = true;
+            }
         }
+    }
+
+    //determines a random limit of number of shots for certain phases
+    private void determineMaxShot() {
+        if(changeMaxShot) {
+            maxShots = Random.Range(5, 10);
+            shots = 0;
+            changeMaxShot = false;
+        }
+    }
+
+    //to shot a projectile from the right angle and position relative to the boss
+    //BUG: WHY IT NO WORK???!!!
+    private void fireShot(bool rotate, Vector2 bossPos, Vector2 projPos, Quaternion angle) {
+        if(rotate) {
+            transform.SetPositionAndRotation(bossPos, angle);
+            Debug.Log("boss");
+        }
+        Instantiate(projectile, projPos, transform.rotation);
+        Debug.Log("projectile");
     }
 }

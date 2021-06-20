@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class playerAction : MonoBehaviour
 {
-    int ms = 5, hp = 5;
-    float lastRotateInput, lastShotInput, timeBetweenInputs = 0.2f, shotInterval = 0.5f, camHeight, camWidth;
+    int ms, hp;
+    float lastRotateInput, timeBetweenInputs, lastShotInput, shotInterval, camHeight, camWidth;
     Sprite[] hpSprites;
     Camera cam;
     GameObject proj, boss;
@@ -27,7 +27,13 @@ public class playerAction : MonoBehaviour
         {
             hpSprites[i] = Resources.Load<Sprite>("Sprites/" + i.ToString());
         }
+
+        ms = 5;
+        hp = 5;
+        timeBetweenInputs = 0.2f;
+        shotInterval = 0.5f;
         lastRotateInput = Time.time;
+        //lastShotInput = Time.time;
     }
 
     // Update is called once per frame

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class projectileBehavior : MonoBehaviour
 {
-    static int playerShotSpeed = 9, bossShotSpeed = 3;
+    static int playerShotSpeed = 9, bossShotSpeed = 9;
     bool isHit = false;
     GameObject player, boss;
     Sprite hitSprite;
@@ -16,15 +16,16 @@ public class projectileBehavior : MonoBehaviour
         boss = GameObject.FindGameObjectWithTag("Boss");
         hitSprite = Resources.Load<Sprite>("Warped Shooting Fx/Pixel Art/Hits/Hit-4/hits-4-1");
         hitAnimator = Resources.Load<RuntimeAnimatorController>("Warped Shooting Fx/Pixel Art/Hits/Hit-4/hits-4-1 (1)");
+
         switch(gameObject.tag){
             case "Player Projectile":
                 transform.Rotate(0, 0, 90); //sprite is rotated -90
             break;
             case "Boss Projectile":
                 transform.Rotate(0, 0, -90);
-                if(boss.GetComponent<bossAction>().shots == boss.GetComponent<bossAction>().shotsToChange && bossShotSpeed <= 11) {
+                /* if(boss.GetComponent<bossAction>().shots == boss.GetComponent<bossAction>().shotsToChange && bossShotSpeed <= 11) {
                     bossShotSpeed += 2;
-                }
+                } */
             break;
         }
     }
@@ -47,6 +48,8 @@ public class projectileBehavior : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    //check event for collisions that this projectile hit
     private void OnCollisionEnter2D(Collision2D other) {
         //play animation
         if(other.gameObject.tag != "Boss Projectile"){
@@ -71,6 +74,7 @@ public class projectileBehavior : MonoBehaviour
             break;
         }
     }
+
     void Disappear(){ //to be used in animation event
         Destroy(gameObject);
     }
