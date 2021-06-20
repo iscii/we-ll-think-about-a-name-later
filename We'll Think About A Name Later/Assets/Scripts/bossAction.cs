@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class bossAction : MonoBehaviour
 {
+    //children indices
+    const int projectileSpawn = 0;
     //public int shots = 0, shotsToChange = 5;
     public bool canMove = false;
     int shots, maxShots, phase, totalPhases, phase1BounceCount; //shotIdx
@@ -107,7 +109,7 @@ public class bossAction : MonoBehaviour
         transform.Translate(new Vector2(left ? -1 : 1, 0) * bossMoveSpd * Time.deltaTime);
         if (Time.time - time >= shotGap)
         {
-            fireShot(false, new Vector2(transform.position.x, transform.position.y), new Vector2(transform.position.x, transform.position.y - Mathf.Ceil(sr.bounds.size.y / 2) - 0.1f), Quaternion.Euler(0, 0, 0));
+            fireShot(false, new Vector2(transform.position.x, transform.position.y), Quaternion.Euler(0, 0, 0));
             //Instantiate(projectile, new Vector2(transform.position.x, transform.position.y - Mathf.Ceil(sr.bounds.size.y / 2) - 0.1f), transform.rotation);
             time = Time.time;
         }
@@ -137,7 +139,7 @@ public class bossAction : MonoBehaviour
     {
         if (Time.time - time >= shotGap)
         {
-            fireShot(true, new Vector2(player.transform.position.x, transform.position.y), new Vector3(transform.position.x, transform.position.y - Mathf.Ceil(sr.bounds.size.y / 2) - 0.1f), Quaternion.Euler(0, 0, 0));
+            fireShot(true, new Vector2(player.transform.position.x, transform.position.y), Quaternion.Euler(0, 0, 0));
             /* transform.position = new Vector2(player.transform.position.x, transform.position.y);
             Instantiate(projectile, new Vector2(transform.position.x, transform.position.y - Mathf.Ceil(sr.bounds.size.y / 2) - 0.1f), transform.rotation); */
             /*  shots++;
@@ -173,22 +175,22 @@ public class bossAction : MonoBehaviour
             int side = Random.Range(0, 3);
             switch(side) {
                 case 0:
-                    fireShot(true, new Vector2(player.transform.position.x, camHeight), new Vector2(transform.position.x, transform.position.y - Mathf.Ceil(sr.bounds.size.y / 2) - 0.1f), Quaternion.Euler(0, 0, 0));
+                    fireShot(true, new Vector2(player.transform.position.x, camHeight), Quaternion.Euler(0, 0, 0));
                     /* transform.SetPositionAndRotation(new Vector2(player.transform.position.x, camHeight), Quaternion.Euler(0, 0, 0));
                     Instantiate(projectile, new Vector2(transform.position.x, transform.position.y - Mathf.Ceil(sr.bounds.size.y / 2) - 0.1f), transform.rotation); */
                 break;
                 case 1:
-                    fireShot(true, new Vector2(camWidth, player.transform.position.y), new Vector2(transform.position.x - Mathf.Ceil(sr.bounds.size.x / 2) - 0.1f, transform.position.y), Quaternion.Euler(0, 0, 270));
+                    fireShot(true, new Vector2(camWidth, player.transform.position.y), Quaternion.Euler(0, 0, 270));
                     /* transform.SetPositionAndRotation(new Vector2(camWidth, player.transform.position.y), Quaternion.Euler(0, 0, 270));
                     Instantiate(projectile, new Vector2(transform.position.x - Mathf.Ceil(sr.bounds.size.x / 2) - 0.1f, transform.position.y), transform.rotation); */
                 break;
                 case 2:
-                    fireShot(true, new Vector2(player.transform.position.x, -camHeight), new Vector2(transform.position.x, transform.position.y + Mathf.Ceil(sr.bounds.size.y / 2) + 0.1f), Quaternion.Euler(0, 0, 180));
+                    fireShot(true, new Vector2(player.transform.position.x, -camHeight), Quaternion.Euler(0, 0, 180));
                     /* transform.SetPositionAndRotation(new Vector2(player.transform.position.x, -camHeight), Quaternion.Euler(0, 0, 180));
                     Instantiate(projectile, new Vector2(transform.position.x, transform.position.y + Mathf.Ceil(sr.bounds.size.y / 2) + 0.1f), transform.rotation); */
                 break;
                 case 3:
-                    fireShot(true, new Vector2(-camWidth, player.transform.position.y), new Vector2(transform.position.x + Mathf.Ceil(sr.bounds.size.x / 2) + 0.1f, transform.position.y), Quaternion.Euler(0, 0, 90));
+                    fireShot(true, new Vector2(-camWidth, player.transform.position.y), Quaternion.Euler(0, 0, 90));
                     /* transform.SetPositionAndRotation(new Vector2(-camWidth, player.transform.position.y), Quaternion.Euler(0, 0, 90));
                     Instantiate(projectile, new Vector2(transform.position.x + Mathf.Ceil(sr.bounds.size.x / 2) + 0.1f, transform.position.y), transform.rotation); */
                 break;
@@ -213,13 +215,11 @@ public class bossAction : MonoBehaviour
     }
 
     //to shot a projectile from the right angle and position relative to the boss
-    //BUG: WHY IT NO WORK???!!!
-    private void fireShot(bool rotate, Vector2 bossPos, Vector2 projPos, Quaternion angle) {
+    //TODO: make a superclass for player and boss, and include this in it.
+    private void fireShot(bool rotate, Vector2 pos, Quaternion angle) {
         if(rotate) {
-            transform.SetPositionAndRotation(bossPos, angle);
-            Debug.Log("boss");
+            transform.SetPositionAndRotation(pos, angle);
         }
-        Instantiate(projectile, projPos, transform.rotation);
-        Debug.Log("projectile");
+        Instantiate(projectile, transform.GetChild(projectileSpawn).position, transform.rotation);
     }
 }

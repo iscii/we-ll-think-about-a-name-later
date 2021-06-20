@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class playerAction : MonoBehaviour
 {
+    //children indices
+    const int sprite = 0, projSpawn = 0, hpbar = 1;
     int ms, hp;
     float lastRotateInput, timeBetweenInputs, lastShotInput, shotInterval, camHeight, camWidth;
     Sprite[] hpSprites;
     Camera cam;
-    GameObject proj, boss;
+    GameObject projectile, boss;
     SpriteRenderer playerSR, hpSR;
 
     // Start is called before the first frame update
@@ -18,10 +20,10 @@ public class playerAction : MonoBehaviour
         camHeight = cam.orthographicSize; //10
         camWidth = camHeight * cam.aspect;
 
-        proj = Resources.Load<GameObject>("Prefabs/playerProjectile");
+        projectile = Resources.Load<GameObject>("Prefabs/playerProjectile");
         boss = GameObject.FindGameObjectWithTag("Boss");
-        playerSR = transform.GetChild(0).GetComponent<SpriteRenderer>();
-        hpSR = transform.GetChild(1).GetComponent<SpriteRenderer>();
+        playerSR = transform.GetChild(sprite).GetComponent<SpriteRenderer>();
+        hpSR = transform.GetChild(hpbar).GetComponent<SpriteRenderer>();
         hpSprites = new Sprite[4];
         for (int i = 0; i < 4; i++)
         {
@@ -67,7 +69,7 @@ public class playerAction : MonoBehaviour
             {
                 if (Time.time - lastRotateInput > timeBetweenInputs)
                 {
-                    transform.GetChild(0).Rotate(0, 0, 90);
+                    transform.GetChild(sprite).Rotate(0, 0, 90);
                     lastRotateInput = Time.time;
                 }
             }
@@ -75,33 +77,19 @@ public class playerAction : MonoBehaviour
             {
                 if (Time.time - lastRotateInput > timeBetweenInputs)
                 {
-                    transform.GetChild(0).Rotate(0, 0, -90);
+                    transform.GetChild(sprite).Rotate(0, 0, -90);
                     lastRotateInput = Time.time;
                 }
             }
 
-            /* if (Input.GetKey("space"))
+            if (Input.GetKey("space"))
             {
                 if (Time.time - lastShotInput > shotInterval)
                 {
-                    //can prolly optimize this by finding a way to turn rotation into a relative position vector and multiplying the vector3 position parameeter with that.
-                    switch(transform.GetChild(0).rotation.eulerAngles.z) {
-                        case 0:
-                            Instantiate(proj, new Vector3(transform.position.x, transform.position.y + playerSR.bounds.size.y/2 + 0.1f, transform.position.z), transform.GetChild(0).rotation);
-                        break;
-                        case 270:
-                            Instantiate(proj, new Vector3(transform.position.x + playerSR.bounds.size.x/2 + 0.1f, transform.position.y, transform.position.z), transform.GetChild(0).rotation);
-                        break;
-                        case 180:
-                            Instantiate(proj, new Vector3(transform.position.x, transform.position.y - playerSR.bounds.size.y/2 - 0.1f, transform.position.z), transform.GetChild(0).rotation);
-                        break;
-                        case 90:
-                            Instantiate(proj, new Vector3(transform.position.x - playerSR.bounds.size.x/2 - 0.1f, transform.position.y, transform.position.z), transform.GetChild(0).rotation);
-                        break;
-                    }
+                    Instantiate(projectile, transform.GetChild(sprite).GetChild(projSpawn).position, transform.GetChild(sprite).rotation);
                     lastShotInput = Time.time;
                 }
-            } */
+            }
         }
     }
 
