@@ -30,7 +30,7 @@ public class playerAction : MonoBehaviour
             hpSprites[i] = Resources.Load<Sprite>("Sprites/" + i.ToString());
         }
 
-        ms = 5;
+        ms = 7;
         hp = 5;
         timeBetweenInputs = 0.2f;
         shotInterval = 0.5f;

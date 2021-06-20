@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class projectileBehavior : MonoBehaviour
 {
-    static int playerShotSpeed = 9, bossShotSpeed = 9;
+    static int playerShotSpeed = 9, bossShotSpeed = 11;
     bool isHit = false;
     GameObject player, boss;
     Sprite hitSprite;
@@ -52,7 +52,7 @@ public class projectileBehavior : MonoBehaviour
     //check event for collisions that this projectile hit
     private void OnCollisionEnter2D(Collision2D other) {
         //play animation
-        if(other.gameObject.tag != "Boss Projectile"){
+        if(other.gameObject.tag != "Boss Projectile" && other.gameObject.tag != "Boss"){
             isHit = true;
             gameObject.transform.position = other.GetContact(0).point;
             gameObject.GetComponent<SpriteRenderer>().sprite = hitSprite;
