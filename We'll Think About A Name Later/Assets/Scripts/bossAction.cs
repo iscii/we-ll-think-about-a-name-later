@@ -7,8 +7,8 @@ public class bossAction : MonoBehaviour
     //children indices
     const int projectileSpawn = 0;
     public bool canMove = false;
-    int shots, maxShots, phase, totalPhases, phase1BounceCount;
-    float time, camWidth, camHeight, shotGap;
+    int shots, maxShots, shotsPerRotation, radius, phase, totalPhases, phase1BounceCount;
+    float time, camWidth, camHeight, shotGap, posY, rotZ;
     bool phaseDone, left, changeMaxShot;
     Camera cam;
     GameObject player, projectile;
@@ -27,8 +27,10 @@ public class bossAction : MonoBehaviour
         sr = gameObject.GetComponent<SpriteRenderer>();
 
         shotGap = 0.75f;
+        shotsPerRotation = 8; //basically how many slices in a circle (360 / 8 = 45 degree)
+        radius = 10;
         phase = -1;
-        totalPhases = 3;
+        totalPhases = 4;
         phaseDone = true;
         changeMaxShot = true;
         time = Time.time;
@@ -47,35 +49,42 @@ public class bossAction : MonoBehaviour
         }
         if (canMove)
         {
-            /* if (phaseDone)
+            if (phaseDone)
             {
-                phase++;
+                //phase++;
+                phase = 3;
                 phaseDone = false;
                 if (phase == 0)
                 {
                     phase1BounceCount = 0;
                     left = Random.Range(0, 1) == 0;
                 }
-                Debug.Log(phase);
+                if(phase == 3) {
+                    posY = player.transform.position.y + radius;
+                    rotZ = 0;
+                }
                 if(phase == totalPhases) {
                     phase = -1;
                     transform.SetPositionAndRotation(new Vector2(0, camHeight), Quaternion.Euler(0, 0, 0));
                     //maybe implement a bool win to mark the end of this loop
                 }
-            } */
-            phase = 2;
+            }
             switch (phase)
             {
                 case 0:
                     phase0(5);
                     break;
                 case 1:
-                    determineMaxShot();
+                    determineMaxShot(7, 10);
                     phase1();
                     break;
                 case 2:
-                    determineMaxShot();
+                    determineMaxShot(7, 10);
                     phase2();
+                    break;
+                case 3:
+                    determineMaxShot(1000, 2000);
+                    phase3();
                     break;
             }
         }
@@ -88,7 +97,6 @@ public class bossAction : MonoBehaviour
         if (Time.time - time >= shotGap)
         {
             fireShot(false, new Vector2(transform.position.x, transform.position.y), Quaternion.Euler(0, 0, 0));
-            //Instantiate(projectile, new Vector2(transform.position.x, transform.position.y - Mathf.Ceil(sr.bounds.size.y / 2) - 0.1f), transform.rotation);
             time = Time.time;
         }
         if (phase1BounceCount < 2)
@@ -115,14 +123,10 @@ public class bossAction : MonoBehaviour
         if (Time.time - time >= shotGap)
         {
             fireShot(true, new Vector2(player.transform.position.x, transform.position.y), Quaternion.Euler(0, 0, 0));
-            /* transform.position = new Vector2(player.transform.position.x, transform.position.y);
-            Instantiate(projectile, new Vector2(transform.position.x, transform.position.y - Mathf.Ceil(sr.bounds.size.y / 2) - 0.1f), transform.rotation); */
             shots++;
             time = Time.time;
             if(shots >= maxShots) {
-                shots = 0;
-                changeMaxShot = true;
-                phaseDone = true;
+                finishedPhase();
             }
         }
     }
@@ -150,26 +154,66 @@ public class bossAction : MonoBehaviour
             shots++;
             time = Time.time;
             if(shots >= maxShots) {
-                shots = 0;
-                changeMaxShot = true;
-                phaseDone = true;
+                finishedPhase();
+            }
+        }
+    }
+
+    //rotates around the player while constantly shooting
+    void phase3() {
+        if(Time.time - time >= shotGap) {
+            int moduleShot = shots % shotsPerRotation;
+            int halfShotsPerRotation = shotsPerRotation / 2;
+            bool neg = moduleShot < halfShotsPerRotation;
+            float deltaY = radius / (shotsPerRotation / 4);
+            if(shots != 0) {    
+                if(moduleShot != 0 && moduleShot <= shotsPerRotation / 2) {
+                    posY = player.transform.position.y + (radius - deltaY * moduleShot);
+                }
+                else {
+                    posY = moduleShot == 0 ? player.transform.position.y + radius : player.transform.position.y + (deltaY * (moduleShot % halfShotsPerRotation) - radius);
+                }
+            }
+            Debug.Log("(" + circleEquation(neg, posY) + ", " + posY + ", " + rotZ + ")");
+            fireShot(true, new Vector2(circleEquation(neg, posY), posY), Quaternion.Euler(0, 0, rotZ));
+            shots++;
+            rotZ += 360 / shotsPerRotation;
+            time = Time.time;
+            if(shots >= maxShots) {
+                finishedPhase();
             }
         }
     }
 
     //determines a random limit of number of shots for certain phases
-    private void determineMaxShot() {
+    private void determineMaxShot(int min, int max) {
         if(changeMaxShot) {
-            maxShots = Random.Range(5, 10);
+            maxShots = Random.Range(min, max);
             shots = 0;
             changeMaxShot = false;
         }
     }
 
+    //executes after a phase is done to reset all the necessary variables back to its original values
+    private void finishedPhase() {
+        shots = 0;
+        changeMaxShot = true;
+        phaseDone = true;
+    }
+
+    //determines the x-position of a circle given a y-position
+    private float circleEquation(bool neg, float y) {
+        y = y - player.transform.position.y;
+        if(Mathf.Abs(y) > radius) {
+            return y < player.transform.position.y ? player.transform.position.y - radius : player.transform.position.y + radius;
+        }
+        float x = Mathf.Sqrt(Mathf.Pow(radius, 2) - Mathf.Pow(y, 2));
+        return neg ? -x + player.transform.position.x : x + player.transform.position.x;
+    }
+
     //to shot a projectile from the right angle and position relative to the boss
     //TODO: make a superclass for player and boss, and include this in it. Maybe even add OnCollisionEnter2D when player hits boss physically
     private void fireShot(bool rotate, Vector2 pos, Quaternion angle) {
-        Debug.Log(pos + ", " + angle);
         if(rotate) {
             transform.SetPositionAndRotation(pos, angle);
         }
