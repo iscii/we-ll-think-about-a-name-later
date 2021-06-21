@@ -8,7 +8,7 @@ public class bossAction : MonoBehaviour
     const int projectileSpawn = 0;
     public bool canMove = false;
     int shots, maxShots, shotsPerRotation, radius, phase, totalPhases, phase1BounceCount;
-    float time, camWidth, camHeight, shotGap, posY, rotZ;
+    float time, camWidth, camHeight, shotGap, posY, rotZ, rotAngle = 1;
     bool phaseDone, left, changeMaxShot;
     Camera cam;
     GameObject player, projectile;
@@ -30,7 +30,7 @@ public class bossAction : MonoBehaviour
         shotsPerRotation = 8; //basically how many slices in a circle (360 / 8 = 45 degree)
         radius = 10;
         phase = -1;
-        totalPhases = 4;
+        totalPhases = 5;
         phaseDone = true;
         changeMaxShot = true;
         time = Time.time;
@@ -86,6 +86,10 @@ public class bossAction : MonoBehaviour
                     determineMaxShot(1000, 2000);
                     phase3();
                     break;
+                case 4:
+                    determineMaxShot(7, 10);
+                    phase4();
+                    break;
             }
         }
     }
@@ -96,7 +100,8 @@ public class bossAction : MonoBehaviour
         transform.Translate(new Vector2(left ? -1 : 1, 0) * bossMoveSpd * Time.deltaTime);
         if (Time.time - time >= shotGap)
         {
-            fireShot(false, new Vector2(transform.position.x, transform.position.y), Quaternion.Euler(0, 0, 0));
+            fireShot();
+            //shots++;?
             time = Time.time;
         }
         if (phase1BounceCount < 2)
@@ -123,7 +128,7 @@ public class bossAction : MonoBehaviour
         if (Time.time - time >= shotGap)
         {
             fireShot(true, new Vector2(player.transform.position.x, transform.position.y), Quaternion.Euler(0, 0, 0));
-            shots++;
+            shots++; //* I think we should move shots++ and/or time = Time.time to fireShot();
             time = Time.time;
             if(shots >= maxShots) {
                 finishedPhase();
@@ -157,6 +162,23 @@ public class bossAction : MonoBehaviour
                 finishedPhase();
             }
         }
+    }
+    void phase4(){
+        float xPos = 3 * Mathf.Cos(rotAngle * Mathf.Deg2Rad);
+        float yPos = 3 * Mathf.Sin(rotAngle * Mathf.Deg2Rad);
+        Vector3 newPos = player.transform.position;
+        newPos.x += xPos;
+        newPos.y += yPos;
+        transform.position = newPos;
+
+        rotAngle++;
+        //real maths?
+        //transform.position, 5 = hypotenuse, calulate position offset from player at given angle.
+        //transform.position = player.transform.position.normalized * 10;
+        //transform.RotateAround(player.transform.position, Vector3.back, 20 * Time.deltaTime);
+        /* if(Time.time - time >= shotGap) {
+            fireShot();
+        } */
     }
 
     //rotates around the player while constantly shooting
@@ -213,6 +235,9 @@ public class bossAction : MonoBehaviour
 
     //to shot a projectile from the right angle and position relative to the boss
     //TODO: make a superclass for player and boss, and include this in it. Maybe even add OnCollisionEnter2D when player hits boss physically
+    private void fireShot(){
+        Instantiate(projectile, transform.GetChild(projectileSpawn).position, transform.rotation);
+    }
     private void fireShot(bool rotate, Vector2 pos, Quaternion angle) {
         if(rotate) {
             transform.SetPositionAndRotation(pos, angle);
