@@ -8,7 +8,7 @@ public class bossAction : MonoBehaviour
     const int projectileSpawn = 0;
     public bool canMove = false;
     int shots, maxShots, shotsPerRotation, radius, phase, totalPhases, phase1BounceCount;
-    float time, camWidth, camHeight, shotGap, posY, rotZ, rotAngle;
+    float time, camWidth, camHeight, shotGap, posY, rotZ, p4rotAngle, p4rotSpeed;
     bool phaseDone, left, changeMaxShot;
     Camera cam;
     GameObject player, projectile;
@@ -28,9 +28,10 @@ public class bossAction : MonoBehaviour
 
         shotGap = 0.75f;
         shotsPerRotation = 8; //basically how many slices in a circle (360 / 8 = 45 degree)
-        rotAngle = 1;
-        radius = 10;
+        radius = 13;
         phase = -1;
+        p4rotAngle = 90; //if we want the boss to start off at the direction in which it leaves off from the next phase, set this to the direction's angle relative to the player
+        p4rotSpeed = 0.03f; //might not need this if only one reference
 
         //TODO make sure to change this totalPhases whenever we add a new phase method!!!
         totalPhases = 5;
@@ -163,21 +164,21 @@ public class bossAction : MonoBehaviour
     }
 
     //fully rotates around the player while shooting
+    //TODO: first three phases transition well into each other, until phase 3. create transition for phase3. phase3 should transtition into phase4 fine
     void phase3(){
-        float xPos = 3 * Mathf.Cos(rotAngle * Mathf.Deg2Rad);
-        float yPos = 3 * Mathf.Sin(rotAngle * Mathf.Deg2Rad);
+        //get pos around player relative to player
         Vector3 newPos = player.transform.position;
-        newPos.x += xPos;
-        newPos.y += yPos;
-        transform.position = newPos;
+        newPos.x += radius * Mathf.Cos(p4rotAngle * Mathf.Deg2Rad); //xPos difference
+        newPos.y += radius * Mathf.Sin(p4rotAngle * Mathf.Deg2Rad); //yPos difference
 
-        rotAngle++;
-        //real maths?
-        //transform.position, 5 = hypotenuse, calulate position offset from player at given angle.
-        //transform.position = player.transform.position.normalized * 10;
-        //transform.RotateAround(player.transform.position, Vector3.back, 20 * Time.deltaTime);
+        transform.position = newPos;
+        transform.up = -1 * (player.transform.position - transform.position); //look at player by directly modifying the "green (y) axis". dunno how it works, but it works
+
+        //rotation angle controls speed of boss rotating around player
+        p4rotAngle+=p4rotSpeed;
+
         if(Time.time - time >= shotGap) {
-            fireShot();
+            fireShot(); //still gotta implement gradually increased shot speed, but idk which vars to use
         }
     }
 
