@@ -33,7 +33,7 @@ public class bossAction : MonoBehaviour
         p4rotAngle = 90; //if we want the boss to start off at the direction in which it leaves off from the next phase, set this to the direction's angle relative to the player
         p4rotSpeed = 0.03f; //might not need this if only one reference
 
-        //TODO make sure to change this totalPhases whenever we add a new phase method!!!
+        //* make sure to change this totalPhases whenever we add a new phase method!!!
         totalPhases = 5;
 
         phaseDone = true;
@@ -57,7 +57,7 @@ public class bossAction : MonoBehaviour
             if (phaseDone)
             {
                 //phase++;
-                phase = 3;
+                phase = 4;
                 phaseDone = false;
                 if (phase == 0)
                 {
