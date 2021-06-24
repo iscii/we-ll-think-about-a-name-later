@@ -43,7 +43,6 @@ public class projectileBehavior : MonoBehaviour
                     gameObject.transform.Translate(new Vector2(1, 0) * bossShotSpeed * Time.deltaTime);
             break;
         }
-        //out of bounds optimization
         if(Mathf.Abs(gameObject.transform.position.x) > 30 || Mathf.Abs(gameObject.transform.position.y) > 30){
             Destroy(gameObject);
         }
@@ -52,7 +51,7 @@ public class projectileBehavior : MonoBehaviour
     //check event for collisions that this projectile hit
     private void OnCollisionEnter2D(Collision2D other) {
         //play animation
-        if(other.gameObject.tag != "Boss Projectile" && other.gameObject.tag != "Boss"){
+        if(tag == "Player Projectile" || (tag == "Boss Projectile" && (other.gameObject.tag != "Boss Projectile" && other.gameObject.tag != "Boss"))){
             isHit = true;
             gameObject.transform.position = other.GetContact(0).point;
             gameObject.GetComponent<SpriteRenderer>().sprite = hitSprite;
@@ -75,7 +74,7 @@ public class projectileBehavior : MonoBehaviour
         }
     }
 
-    void Disappear(){ //to be used in animation event
+    void Disappear(){ //used in animation event
         Destroy(gameObject);
     }
 }

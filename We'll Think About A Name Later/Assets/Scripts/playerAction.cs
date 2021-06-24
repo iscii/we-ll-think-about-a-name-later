@@ -6,20 +6,25 @@ public class playerAction : MonoBehaviour
 {
     //children indices
     const int sprite = 0, projSpawn = 0, hpbar = 1;
-    int ms, hp;
-    float lastRotateInput, timeBetweenInputs, lastShotInput, shotInterval, camHeight, camWidth;
+    int ms;
+    [SerializeField] int hp;
+    float lastRotateInput, timeBetweenInputs, lastShotInput, shotInterval;
     Sprite[] hpSprites;
-    Camera cam;
-    GameObject projectile, boss;
+    GameObject boss;
     SpriteRenderer playerSR, hpSR;
+    private Camera cam;
+    protected float camHeight, camWidth;
+    protected GameObject player, projectile;
+
 
     // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
+        //gets the width and height of the camera view borders
         cam = Camera.main;
-        camHeight = cam.orthographicSize; //10
+        camHeight = cam.orthographicSize;
         camWidth = camHeight * cam.aspect;
-
+        
         projectile = Resources.Load<GameObject>("Prefabs/playerProjectile");
         boss = GameObject.FindGameObjectWithTag("Boss");
         playerSR = transform.GetChild(sprite).GetComponent<SpriteRenderer>();
@@ -82,7 +87,7 @@ public class playerAction : MonoBehaviour
                 }
             }
 
-            if (Input.GetKey("space"))
+            if (Input.GetKey("space")) //hitting the boss adds score
             {
                 if (Time.time - lastShotInput > shotInterval)
                 {
