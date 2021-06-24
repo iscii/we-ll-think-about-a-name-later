@@ -28,7 +28,7 @@ public class bossAction : MonoBehaviour
 
         shotGap = 0.75f;
         shotsPerRotation = 8; //basically how many slices in a circle (360 / 8 = 45 degree)
-        radius = 13;
+        radius = 10;
         phase = -1;
         p4rotAngle = 90; //if we want the boss to start off at the direction in which it leaves off from the next phase, set this to the direction's angle relative to the player
         p4rotSpeed = 0.03f; //might not need this if only one reference
@@ -57,7 +57,7 @@ public class bossAction : MonoBehaviour
             if (phaseDone)
             {
                 //phase++;
-                phase = 3;
+                phase = 4;
                 phaseDone = false;
                 if (phase == 0)
                 {
@@ -65,7 +65,11 @@ public class bossAction : MonoBehaviour
                     left = Random.Range(0, 1) == 0;
                 }
                 if(phase == 3) {
+                    radius = 13;
+                }
+                if(phase == 4) {
                     posY = player.transform.position.y + radius;
+                    radius = 10;
                     rotZ = 0;
                 }
                 if(phase == totalPhases) {
