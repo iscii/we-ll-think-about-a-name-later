@@ -12,7 +12,7 @@ public class bossAction : MonoBehaviour
     bool phaseDone, left, changeMaxShot;
     Camera cam;
     protected float camHeight, camWidth;
-    protected GameObject player, projectile;
+    GameObject player, projectile;
 
     SpriteRenderer sr;
 
@@ -26,6 +26,7 @@ public class bossAction : MonoBehaviour
         //player = GameObject.FindGameObjectWithTag("Player");
         projectile = Resources.Load<GameObject>("Prefabs/ProjectileBoss");
         sr = gameObject.GetComponent<SpriteRenderer>();
+        player = GameObject.FindGameObjectWithTag("Player");
 
         shotGap = 0.75f;
         shotsPerRotation = 8; //basically how many slices in a circle (360 / 8 = 45 degree)
@@ -155,7 +156,7 @@ public class bossAction : MonoBehaviour
                 finishedPhase();
                 return;
             }
-            fireShot(new Vector2(player.transform.position.x, transform.position.y), Quaternion.Euler(0, 0, 0));
+            fireShot(new Vector2(player.transform.position.x, transform.position.y), Quaternion.Euler(0, 0, 0)); 
         }
     }
 
