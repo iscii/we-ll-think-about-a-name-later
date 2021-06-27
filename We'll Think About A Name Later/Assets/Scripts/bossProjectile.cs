@@ -6,7 +6,7 @@ public class bossProjectile : projectile
 {
     GameObject player;
     public bossProjectile() : base(13) { }
-    void Awake()
+    void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
         transform.Rotate(0, 0, -90);

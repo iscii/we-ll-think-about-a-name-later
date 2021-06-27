@@ -10,13 +10,11 @@ public class entity : MonoBehaviour
     Camera cam;
     protected SpriteRenderer sr;
     protected GameObject proj;
-
     public entity(string projName)
     {
         this.projName = projName;
     }
-
-    void Start()
+    void Awake()
     {
         cam = Camera.main;
         camHeight = cam.orthographicSize;
@@ -25,11 +23,9 @@ public class entity : MonoBehaviour
         sr = gameObject.GetComponent<SpriteRenderer>();
         proj = Resources.Load<GameObject>($"Prefabs/{projName}");
     }
-
-    void fireShot()
+    protected void fireShot()
     {
         Instantiate(proj, transform.GetChild(projSpawn).position, transform.rotation);
         lastShotTime = Time.time;
     }
-    //*setposandrot for fireshot prolly can just be on its own instead of as an override fireshot function since the rest of it is identical
 }

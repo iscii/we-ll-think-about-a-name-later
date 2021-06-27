@@ -5,7 +5,7 @@ using UnityEngine;
 public class playerProjectile : projectile
 {
     public playerProjectile() : base(9) { }
-    void Awake()
+    void Start()
     {
         transform.Rotate(0, 0, 90);
     }

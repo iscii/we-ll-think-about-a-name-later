@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class bossBehavior : entity
 {
-    public bool canMove;
+    [HideInInspector] public bool canMove;
     int shots, maxShots, shotsPerRotation, side, radius, phase, totalPhases, phase1BounceCount;
     float posY, rotZ, p3rotAngle;
     bool phaseDone, isLeft, changeMaxShot;
     GameObject player;
     public bossBehavior() : base("bossProjectile") { }
-    void Awake()
+    void Start()
     {
         //references
         player = GameObject.FindGameObjectWithTag("Player");
@@ -42,6 +42,7 @@ public class bossBehavior : entity
             if (transform.position.y <= camHeight)
                 canMove = true;
         }
+        //begin phases
         if (canMove)
         {
             if (phaseDone)
@@ -101,7 +102,9 @@ public class bossBehavior : entity
     {
         transform.Translate(new Vector2(isLeft ? -1 : 1, 0) * bossMoveSpd * Time.deltaTime);
         if (Time.time - lastShotTime >= shotInterval)
-            fireShot(transform.GetChild(projSpawn).position, transform.rotation);
+        {
+            fireShot();
+        }
         if (phase1BounceCount < 2)
         {
             if (Mathf.Abs(transform.position.x) >= camWidth)
@@ -130,8 +133,8 @@ public class bossBehavior : entity
                 finishedPhase();
                 return;
             }
-
-            fireShot(new Vector2(player.transform.position.x, transform.position.y), Quaternion.Euler(0, 0, 0), transform.GetChild(projSpawn).position, transform.rotation);
+            transform.position = new Vector2(player.transform.position.x, camHeight);
+            fireShot();
             shots++;
         }
     }
@@ -150,19 +153,21 @@ public class bossBehavior : entity
             side = Random.Range(0, 3);
             switch (side)
             {
-                default:
-                    break;
                 case 0:
-                    fireShot(new Vector2(player.transform.position.x, camHeight), Quaternion.Euler(0, 0, 0), transform.GetChild(projSpawn).position, transform.rotation);
+                    transform.SetPositionAndRotation(new Vector2(player.transform.position.x, camHeight), Quaternion.Euler(0, 0, 0));
+                    fireShot();
                     break;
                 case 1:
-                    fireShot(new Vector2(-camHeight * 1.25f, player.transform.position.y), Quaternion.Euler(0, 0, 90), transform.GetChild(projSpawn).position, transform.rotation);
+                    transform.SetPositionAndRotation(new Vector2(-camHeight * 1.25f, player.transform.position.y), Quaternion.Euler(0, 0, 90));
+                    fireShot();
                     break;
                 case 2:
-                    fireShot(new Vector2(player.transform.position.x, -camHeight), Quaternion.Euler(0, 0, 180), transform.GetChild(projSpawn).position, transform.rotation);
+                    transform.SetPositionAndRotation(new Vector2(player.transform.position.x, -camHeight), Quaternion.Euler(0, 0, 180));
+                    fireShot();
                     break;
                 case 3:
-                    fireShot(new Vector2(camHeight * 1.25f, player.transform.position.y), Quaternion.Euler(0, 0, 270), transform.GetChild(projSpawn).position, transform.rotation);
+                    transform.SetPositionAndRotation(new Vector2(camHeight * 1.25f, player.transform.position.y), Quaternion.Euler(0, 0, 270));
+                    fireShot();
                     break;
             }
             shots++;
@@ -191,7 +196,7 @@ public class bossBehavior : entity
 
         if (Time.time - lastShotTime >= shotInterval)
         {
-            fireShot(transform.GetChild(projSpawn).position, transform.rotation); //TODO still gotta implement gradually increased shot speed, but idk which vars to use
+            fireShot(); //TODO still gotta implement gradually increased shot speed, but idk which vars to use
             shots++;
         }
     }
@@ -222,7 +227,8 @@ public class bossBehavior : entity
                 else
                     posY = moduleShot == 0 ? player.transform.position.y + radius : player.transform.position.y + (deltaY * (moduleShot % halfShotsPerRotation) - radius);
             }
-            fireShot(new Vector2(circleEquation(neg, posY), posY), Quaternion.Euler(0, 0, rotZ), transform.GetChild(projSpawn).position, transform.rotation);
+            transform.SetPositionAndRotation(new Vector2(circleEquation(neg, posY), posY), Quaternion.Euler(0, 0, rotZ));
+            fireShot();
             shots++;
             rotZ += 360 / shotsPerRotation;
         }
@@ -261,7 +267,7 @@ public class bossBehavior : entity
         //check to see if the discriminate is negative or not
         if (Mathf.Abs(y) > radius)
             return y < player.transform.position.y ? player.transform.position.y - radius : player.transform.position.y + radius;
-        
+
         float x = Mathf.Sqrt(Mathf.Pow(radius, 2) - Mathf.Pow(y, 2));
         return neg ? -x + player.transform.position.x : x + player.transform.position.x;
     }
@@ -272,5 +278,10 @@ public class bossBehavior : entity
         return side == 3 ? 0 : (side + 1) * 90;
     }
 
-    //TODO do fireShot
+    //TODO try to find a way to simplify this while using fireShot() from entity. otherwise, there'd really be no point in having a fireshot method in entity.
+    //Currently, in bossAction's fireShot(), theres:
+    /* if (phase != 0)
+            shots++; */
+    //but we also just have shots++ after each fireShot() call in every phase besides 0. if we have that, we're just double counting - this conditional isn't necessary in fireShot()
+    //so for now imma just leave it as that and inheriting the fireShot() method from entity.cs instead
 }

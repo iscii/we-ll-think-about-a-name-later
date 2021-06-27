@@ -11,13 +11,13 @@ public class projectile : MonoBehaviour
     {
         this.shotSpeed = shotSpeed;
     }
-    protected void Start()
+    void Awake()
     {
         hitSprite = Resources.Load<Sprite>("Warped Shooting Fx/Pixel Art/Hits/Hit-4/hits-4-1");
         hitAnimator = Resources.Load<RuntimeAnimatorController>("Warped Shooting Fx/Pixel Art/Hits/Hit-4/hits-4-1 (1)");
         isHit = false;
     }
-    protected virtual void Update()
+    void Update()
     {
         if (!isHit)
             gameObject.transform.Translate(new Vector2(1, 0) * shotSpeed * Time.deltaTime);
@@ -35,8 +35,8 @@ public class projectile : MonoBehaviour
         Destroy(gameObject.GetComponent<CapsuleCollider2D>());
 
     }
-    protected void Disappear()
-    { //used in animation event
+    protected void Disappear() //used in animation event
+    { 
         Destroy(gameObject);
     }
 }

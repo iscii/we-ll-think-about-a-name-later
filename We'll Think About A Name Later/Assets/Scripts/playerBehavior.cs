@@ -10,7 +10,7 @@ public class playerBehavior : entity
     SpriteRenderer hpSR;
     Sprite[] hpSprites;
     public playerBehavior() : base("playerProjectile") { }
-    void Awake()
+    void Start()
     {
         //references
         boss = GameObject.FindGameObjectWithTag("Boss");
@@ -26,7 +26,7 @@ public class playerBehavior : entity
         //var initializations
         ms = 7;
         hp = 5;
-        timeBetweenInputs = 0.2f;
+        timeBetweenInputs = 0.1f;
         lastRotateInput = Time.time;
         shotInterval = 0.5f;
     }
@@ -35,12 +35,12 @@ public class playerBehavior : entity
     {
         checkMove();
         checkRotate();
-        checkShoot();
+        //checkShoot();
     }
 
     void checkMove()
     {
-        if(boss.GetComponent<bossAction>().canMove){
+        if(boss.GetComponent<bossBehavior>().canMove){
             if (!(Input.GetKey("w") && Input.GetKey("s")))
             {
                 if (Input.GetKey("w") && ((transform.position.y + sr.bounds.size.y / 2) < camHeight))
