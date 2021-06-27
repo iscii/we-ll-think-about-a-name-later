@@ -31,4 +31,5 @@ public class entity : MonoBehaviour
         Instantiate(proj, transform.GetChild(projSpawn).position, transform.rotation);
         lastShotTime = Time.time;
     }
+    //*setposandrot for fireshot prolly can just be on its own instead of as an override fireshot function since the rest of it is identical
 }
