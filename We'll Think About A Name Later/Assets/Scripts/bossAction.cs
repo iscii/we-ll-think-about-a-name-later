@@ -13,7 +13,6 @@ public class bossAction : MonoBehaviour
     Camera cam;
     protected float camHeight, camWidth;
     GameObject player, projectile;
-
     SpriteRenderer sr;
 
     // Start is called before the first frame update
@@ -24,7 +23,7 @@ public class bossAction : MonoBehaviour
         camWidth = camHeight * cam.aspect;
         
         //player = GameObject.FindGameObjectWithTag("Player");
-        projectile = Resources.Load<GameObject>("Prefabs/ProjectileBoss");
+        projectile = Resources.Load<GameObject>("Prefabs/bossProjectile");
         sr = gameObject.GetComponent<SpriteRenderer>();
         player = GameObject.FindGameObjectWithTag("Player");
 
@@ -47,6 +46,7 @@ public class bossAction : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //"showdown"
         if (Time.time - time >= 0.05f && !canMove)
         {
             transform.position = new Vector2(transform.position.x, transform.position.y - 0.01f);
@@ -300,7 +300,7 @@ public class bossAction : MonoBehaviour
     }
 
     //overloading
-    private void fireShot(Vector2 pos, Quaternion angle)
+    private void fireShot(Vector2 pos, Quaternion angle) //i think we leave trransform.setposandrot on its own w/o making a functionf or it cos the rest is the exact same as fireshot
     {
         transform.SetPositionAndRotation(pos, angle);
         Instantiate(projectile, transform.GetChild(projectileSpawn).position, transform.rotation);

@@ -26,6 +26,8 @@ public class playerAction : MonoBehaviour
         camWidth = camHeight * cam.aspect;
         
         projectile = Resources.Load<GameObject>("Prefabs/playerProjectile");
+
+        
         boss = GameObject.FindGameObjectWithTag("Boss");
         playerSR = transform.GetChild(sprite).GetComponent<SpriteRenderer>();
         hpSR = transform.GetChild(hpbar).GetComponent<SpriteRenderer>();
@@ -70,6 +72,7 @@ public class playerAction : MonoBehaviour
                     transform.Translate(new Vector2(1, 0) * ms * Time.deltaTime);
                 }
             }
+
             if (Input.GetKey("q"))
             {
                 if (Time.time - lastRotateInput > timeBetweenInputs)

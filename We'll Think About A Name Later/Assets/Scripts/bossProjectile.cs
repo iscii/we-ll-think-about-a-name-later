@@ -21,7 +21,7 @@ public class bossProjectile : projectile
         switch (other.gameObject.tag)
         {
             case "Player":
-                player.GetComponent<playerAction>().takeDamage();
+                player.GetComponent<playerBehavior>().takeDamage();
                 break;
             case "Player Projectile":
                 Destroy(other.gameObject);

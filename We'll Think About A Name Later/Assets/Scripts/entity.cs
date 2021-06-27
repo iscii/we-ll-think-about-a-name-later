@@ -2,44 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class entity : MonoBehaviour {
-    protected float camHeight, camWidth;
-    protected GameObject player, projectile;
+public class entity : MonoBehaviour
+{
+    string projName; //might be unnecessary if we're gonna need to override fireshot completly in boss behavior
+    protected const int sprite = 0, projSpawn = 0, hpbar = 1;
+    protected float camHeight, camWidth, lastShotTime, shotInterval;
+    Camera cam;
     protected SpriteRenderer sr;
+    protected GameObject proj;
 
-    private const int projSpawn = 0;
-    private Camera cam;
+    public entity(string projName)
+    {
+        this.projName = projName;
+    }
 
-    //Start is called before the first fram update
-    /* public void Start() {
-        //gets the width and height of the camera view borders
+    void Start()
+    {
         cam = Camera.main;
         camHeight = cam.orthographicSize;
         camWidth = camHeight * cam.aspect;
 
-        player = GameObject.FindGameObjectWithTag("Player");
-        projectile = Resources.Load<GameObject>("Prefabs/playerProjectile");
-
-    } 
-    
-    //sets sr to a specific sprite : boss or the player
-    public void setSR(SpriteRenderer tempSR) {
-        sr = tempSR;
+        sr = gameObject.GetComponent<SpriteRenderer>();
+        proj = Resources.Load<GameObject>($"Prefabs/{projName}");
     }
-    
-    private void Update() {
-        checkState();
+
+    void fireShot()
+    {
+        Instantiate(proj, transform.GetChild(projSpawn).position, transform.rotation);
+        lastShotTime = Time.time;
     }
-    
-    protected virtual void checkState() {
-
-    }*/
-
-    /* void fireShot(Vector3 shotpos, Quaternion angle) {
-        Instantiate()
-    } */
-
-    /* public void fireShot(Vector2 pos, Quaternion angle) {
-
-    } */
 }
