@@ -19,48 +19,24 @@ public class bossBehavior : entity
         shotsPerRotation = 8; //basically how many slices in a circle (360 / 8 = 45 degree)
         shotInterval = 0.75f;
         phase = -1; //will get incremented before first phase
-        totalPhases = 5;
         radius = 10;
         canMove = false;
         phaseDone = true;
         changeMaxShot = true;
         lastShotTime = Time.time;
 
-        //initial position "showdown"
+        totalPhases = 5; //* make sure to change this totalPhases whenever we add a new phase method!!!
+
+        //spawn boss at higher y-axis to initiate showdown
         transform.position = new Vector2(player.transform.position.x, camHeight + Mathf.Ceil(sr.bounds.size.y / 2));
-    }
-
-    void Update()
-    {
-
     }
 
     //add update and methods
 
-    //initializes all the variables
-    private void Awake() 
-    {
-        shotsPerRotation = 8; //basically how many slices in a circle (360 / 8 = 45 degree each)
-        radius = 10;
-        phase = -1;
-        p3rotSpeed = 0.1f; //might not need this if only one reference
-        phaseDone = true;
-        changeMaxShot = true;
-
-        //TODO make sure to change this totalPhases whenever we add a new phase method!!!
-        totalPhases = 5;
-
-        setShotInterval(0.75f);
-        setSR(gameObject.GetComponent<SpriteRenderer>());
-
-        //gets the boss to spawn with a higher y-axis to initiate the SHOWDOWN
-        transform.position = new Vector2(player.transform.position.x, camHeight + Mathf.Ceil(sr.bounds.size.y / 2));
-    }
-
     void Update()
     {
         //showdown
-        if (Time.time - time >= 0.05f && !canMove)
+        if (Time.time - lastShotTime >= 0.05f && !canMove)
         {
             transform.position = new Vector2(transform.position.x, transform.position.y - 0.01f);
             if (transform.position.y <= camHeight)
@@ -75,7 +51,7 @@ public class bossBehavior : entity
                 if (phase == 0)
                 {
                     phase1BounceCount = 0;
-                    left = Random.Range(0, 1) == 0;
+                    isLeft = Random.Range(0, 1) == 0;
                 }
                 if (phase == 3)
                 {
@@ -120,18 +96,18 @@ public class bossBehavior : entity
         }
     }
 
-    // Starts at the middle, and goes randomly to left or right before traversing the other way, while shooting at the same time
+    // Starts at the middle, and goes randomly to isLeft or right before traversing the other way, while shooting at the same time
     private void phase0(int bossMoveSpd)
     {
-        transform.Translate(new Vector2(left ? -1 : 1, 0) * bossMoveSpd * Time.deltaTime);
-        if (Time.time - time >= shotInterval)
+        transform.Translate(new Vector2(isLeft ? -1 : 1, 0) * bossMoveSpd * Time.deltaTime);
+        if (Time.time - lastShotTime >= shotInterval)
             fireShot(transform.GetChild(projSpawn).position, transform.rotation);
         if (phase1BounceCount < 2)
         {
             if (Mathf.Abs(transform.position.x) >= camWidth)
             {
-                transform.position = new Vector2(camWidth * (left ? -1 : 1) + (left ? 0.1f : -0.1f), transform.position.y);
-                left = !left;
+                transform.position = new Vector2(camWidth * (isLeft ? -1 : 1) + (isLeft ? 0.1f : -0.1f), transform.position.y);
+                isLeft = !isLeft;
                 phase1BounceCount++;
             }
         }
@@ -147,7 +123,7 @@ public class bossBehavior : entity
     //Tracks the player's position and shoot
     private void phase1()
     {
-        if (Time.time - time >= shotInterval)
+        if (Time.time - lastShotTime >= shotInterval)
         {
             if (shots >= maxShots)
             {
@@ -163,7 +139,7 @@ public class bossBehavior : entity
     //Randomly teleport around the screen, trying to hit the player through surprise 
     private void phase2()
     {
-        if (Time.time - time >= shotInterval)
+        if (Time.time - lastShotTime >= shotInterval)
         {
             if (shots >= maxShots)
             {
@@ -211,9 +187,9 @@ public class bossBehavior : entity
         transform.up = -1 * (player.transform.position - transform.position); //look at player by directly modifying the "green (y) axis". dunno how it works, but it works
 
         //rotation angle controls speed of boss rotating around player
-        p3rotAngle += p3rotSpeed;
+        p3rotAngle += 0.1f;
 
-        if (Time.time - time >= shotInterval)
+        if (Time.time - lastShotTime >= shotInterval)
         {
             fireShot(transform.GetChild(projSpawn).position, transform.rotation); //TODO still gotta implement gradually increased shot speed, but idk which vars to use
             shots++;
@@ -223,7 +199,7 @@ public class bossBehavior : entity
     //rotates periodically around the player while shooting
     private void phase4()
     {
-        if (Time.time - time >= shotInterval)
+        if (Time.time - lastShotTime >= shotInterval)
         {
             if (shots >= maxShots)
             {
@@ -234,11 +210,11 @@ public class bossBehavior : entity
             //moduleShot resets the shot back to 0 when surpassing the shotsPerRotation, so 8 would become 0 since 8 % 8 gives 0, which resets back to the start
             int moduleShot = shots % shotsPerRotation;
             int halfShotsPerRotation = shotsPerRotation / 2;
-            //neg test if it's on the left of the circle or to the right
+            //neg test if it's on the isLeft of the circle or to the right
             bool neg = moduleShot < halfShotsPerRotation;
             //deltaY determines how much y-coord needs to be changed per one rotation/teleportation
             float deltaY = radius / (shotsPerRotation / 4);
-            //if it's to the left of the circle, decrease the y-coord, and vice-versa when it's to the right of the circle
+            //if it's to the isLeft of the circle, decrease the y-coord, and vice-versa when it's to the right of the circle
             if (shots != 0)
             {
                 if (moduleShot != 0 && moduleShot <= shotsPerRotation / 2)
@@ -295,4 +271,6 @@ public class bossBehavior : entity
     {
         return side == 3 ? 0 : (side + 1) * 90;
     }
+
+    //TODO do fireShot
 }
