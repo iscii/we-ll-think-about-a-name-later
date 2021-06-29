@@ -66,10 +66,10 @@ public class bossBehavior : entity
                     posY = player.transform.position.y + Mathf.RoundToInt(Mathf.Sin((side + 1) * 90 * Mathf.Deg2Rad)) * radius;
                     rotZ = side * 90;
                 }
-                if (phase == totalPhases)
+                if (phase == totalPhases-1)
                 {
-                    phase = -1;
-                    transform.SetPositionAndRotation(new Vector2(0, camHeight), Quaternion.Euler(0, 0, 0));
+                    //phase = -1;
+                    //transform.SetPositionAndRotation(new Vector2(0, camHeight), Quaternion.Euler(0, 0, 0));
                     //TODO maybe implement a bool "win" to mark the end of this loop
                 }
             }
