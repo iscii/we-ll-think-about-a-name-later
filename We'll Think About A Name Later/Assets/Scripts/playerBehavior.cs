@@ -75,7 +75,7 @@ public class playerBehavior : entity
                 lastRotateInput = Time.time;
             }
         }
-        if (Input.GetKey("r"))
+        if (Input.GetKey("e"))
         {
             if (Time.time - lastRotateInput > timeBetweenInputs)
             {
