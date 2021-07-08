@@ -14,6 +14,7 @@ public class entity : MonoBehaviour
     {
         this.projName = projName;
     }
+
     void Awake()
     {
         cam = Camera.main;
@@ -23,6 +24,7 @@ public class entity : MonoBehaviour
         sr = gameObject.GetComponent<SpriteRenderer>();
         proj = Resources.Load<GameObject>($"Prefabs/{projName}");
     }
+
     protected void fireShot()
     {
         Instantiate(proj, transform.GetChild(projSpawn).position, transform.rotation);

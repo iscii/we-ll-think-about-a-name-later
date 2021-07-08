@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class bossBehavior : entity
 {
-    static int nClones = 0;
+    public static int nClones = 0;
     [HideInInspector] public bool canMove = false;
     protected int phase = -1;
     protected bool isClone = false;
@@ -101,7 +101,7 @@ public class bossBehavior : entity
         switch (phase)
         {
             case 0:
-                Debug.Log("qijie is big dumb dumb");
+                //ebug.Log("qijie is big dumb dumb");
                 phase0(7);
                 break;
             case 1:
@@ -179,19 +179,19 @@ public class bossBehavior : entity
             switch (side)
             {
                 case 0:
-                    transform.SetPositionAndRotation(new Vector2(player.transform.position.x, camHeight), Quaternion.Euler(0, 0, 0));
+                    transform.SetPositionAndRotation(new Vector2(player.transform.position.x, player.transform.position.y + camHeight * 0.75f), Quaternion.Euler(0, 0, 0));
                     fireShot();
                     break;
                 case 1:
-                    transform.SetPositionAndRotation(new Vector2(-camHeight * 1.25f, player.transform.position.y), Quaternion.Euler(0, 0, 90));
+                    transform.SetPositionAndRotation(new Vector2(player.transform.position.x - camHeight * 1.25f, player.transform.position.y), Quaternion.Euler(0, 0, 90));
                     fireShot();
                     break;
                 case 2:
-                    transform.SetPositionAndRotation(new Vector2(player.transform.position.x, -camHeight), Quaternion.Euler(0, 0, 180));
+                    transform.SetPositionAndRotation(new Vector2(player.transform.position.x, player.transform.position.y - camHeight * 0.75f), Quaternion.Euler(0, 0, 180));
                     fireShot();
                     break;
                 case 3:
-                    transform.SetPositionAndRotation(new Vector2(camHeight * 1.25f, player.transform.position.y), Quaternion.Euler(0, 0, 270));
+                    transform.SetPositionAndRotation(new Vector2(player.transform.position.x + camHeight * 1.25f, player.transform.position.y), Quaternion.Euler(0, 0, 270));
                     fireShot();
                     break;
             }

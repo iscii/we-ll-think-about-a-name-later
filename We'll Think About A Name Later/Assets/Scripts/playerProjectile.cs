@@ -9,6 +9,7 @@ public class playerProjectile : projectile
     {
         transform.Rotate(0, 0, 90);
     }
+
     void OnCollisionEnter2D(Collision2D other)
     {
         collide(other);

@@ -21,6 +21,7 @@ public class bossProjectile : projectile
         switch (other.gameObject.tag)
         {
             case "Player":
+            if(player.GetComponent<playerBehavior>().ms < 20)
                 player.GetComponent<playerBehavior>().takeDamage();
                 break;
             case "Player Projectile":
