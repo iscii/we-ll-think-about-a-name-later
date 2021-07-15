@@ -6,8 +6,8 @@ public class entity : MonoBehaviour
 {
     string projName; //might be unnecessary if we're gonna need to override fireshot completly in boss behavior
     protected const int sprite = 0, projSpawn = 0, hpbar = 1;
-    protected float camHeight, camWidth, lastShotTime, shotInterval;
-    Camera cam;
+    protected float  lastShotTime, shotInterval;
+    public float camHeight, camWidth;
     protected SpriteRenderer sr;
     protected GameObject proj;
     public entity(string projName)
@@ -17,9 +17,8 @@ public class entity : MonoBehaviour
 
     void Awake()
     {
-        cam = Camera.main;
-        camHeight = cam.orthographicSize;
-        camWidth = camHeight * cam.aspect;
+        camHeight = Camera.main.orthographicSize;
+        camWidth = camHeight * Camera.main.aspect;
 
         sr = gameObject.GetComponent<SpriteRenderer>();
         proj = Resources.Load<GameObject>($"Prefabs/{projName}");
