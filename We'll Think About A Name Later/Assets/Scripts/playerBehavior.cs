@@ -6,9 +6,9 @@ public class playerBehavior : entity
 {
     public float ms;
     [SerializeField] int hp;
-    int dirId;
-    float lastRotateInput, timeBetweenInputs, lastDashInput;
-    Vector2 dashPos;
+    int dirId, dir;
+    float lastRotateInput, timeBetweenInputs, lastDashInput, dist = 3;
+    Vector3 dashedPosition;
     GameObject boss;
     SpriteRenderer hpSR;
     Sprite[] hpSprites;
@@ -33,7 +33,6 @@ public class playerBehavior : entity
         lastRotateInput = Time.time;
         lastDashInput = Time.time;
         shotInterval = 0.5f;
-        dashPos = new Vector2(0, 0);
     }
 
     void Update()
@@ -56,12 +55,12 @@ public class playerBehavior : entity
                     ms = 7;
                 if (!(Input.GetKey("w") && Input.GetKey("s")))
                 {
-                    if (Input.GetKey("w") && ((transform.position.y + sr.bounds.size.y / 2) < camHeight))
+                    if (Input.GetKey("w"))
                     {
                         transform.Translate(new Vector2(0, 1) * ms * Time.deltaTime);
                         dirId = 0;
                     }
-                    if (Input.GetKey("s") && ((transform.position.y - sr.bounds.size.y / 2) > (camHeight * -1)))
+                    if (Input.GetKey("s"))
                     {
                         transform.Translate(new Vector2(0, -1) * ms * Time.deltaTime);
                         dirId = 2;
@@ -70,12 +69,12 @@ public class playerBehavior : entity
 
                 if (!(Input.GetKey("a") && Input.GetKey("d")))
                 {
-                    if (Input.GetKey("a") && ((transform.position.x - sr.bounds.size.x / 2) > (camWidth * -1)))
+                    if (Input.GetKey("a"))
                     {
                         transform.Translate(new Vector2(-1, 0) * ms * Time.deltaTime);
                         dirId = 1;
                     }
-                    if (Input.GetKey("d") && ((transform.position.x + sr.bounds.size.x / 2) < camWidth))
+                    if (Input.GetKey("d"))
                     {
                         transform.Translate(new Vector2(1, 0) * ms * Time.deltaTime);
                         dirId = 3;
@@ -83,7 +82,7 @@ public class playerBehavior : entity
                 }
             }
 
-            int dir = dirId * 90;
+            dir = dirId * 90;
             if (dirId == 3 && Input.GetKey("w")) dir += 45;
             else if (dirId == 3 && Input.GetKey("s")) dir -= 45;
             if (dirId == 1 && Input.GetKey("w")) dir -= 45;
@@ -128,25 +127,26 @@ public class playerBehavior : entity
         if (Input.GetKeyDown(KeyCode.LeftShift) && Time.time - lastDashInput >= 3 - bossBehavior.nClones)
         {
             ms *= 5;
-            dashPos = transform.position;
+            dir = (dir + 90) % 360;
+            float angle = dir * Mathf.Deg2Rad;
+            if(dir % 45 == 0) {
+                int modX = (dir < 90 || dir > 270 ? 1 : -1), modY = (dir < 180 ? 1 : -1);
+                if(dir % 90 == 0) {
+                    dashedPosition = new Vector3(transform.position.x + dist * Mathf.Abs(Mathf.Cos(angle)) * modX, transform.position.y + dist * Mathf.Abs(Mathf.Sin(angle)) * modY, transform.position.z);
+                }
+                else {
+                    dist = Mathf.Sqrt(Mathf.Pow(dist, 2) / 2);
+                    dashedPosition = new Vector3(transform.position.x + dist * modX, transform.position.y + dist * modY, transform.position.z);
+                }
+            }
+            dist = 3;
         }
         if (ms >= 10)
         {
-            transform.Translate(transform.GetChild(sprite).up * ms * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, dashedPosition, Time.deltaTime * ms);
 
-            //TODO WORK ON THIS
-            //optimization for bounds
-            if (Mathf.Abs(transform.position.x) + sr.bounds.size.x / 2 > camWidth)
-            {
-                transform.position = new Vector2(transform.position.x <= 0 ? -camWidth + 1 : camWidth - 1, transform.position.y);
-            }
-            if (Mathf.Abs(transform.position.y) + sr.bounds.size.x / 2 > camHeight)
-            {
-                transform.position = new Vector2(transform.position.x, transform.position.y <= 0 ? -camHeight + 1 : camHeight - 1);
-            }
-
-            //check distance bt vars
-            if (Vector2.Distance(dashPos, transform.position) >= 3) 
+            //exit condition
+            if (transform.position == dashedPosition) 
             {
                 ms = 7;
                 lastDashInput = Time.time;
