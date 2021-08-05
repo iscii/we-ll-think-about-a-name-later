@@ -101,7 +101,6 @@ public class bossBehavior : entity
         switch (phase)
         {
             case 0:
-                //ebug.Log("qijie is big dumb dumb");
                 phase0(7);
                 break;
             case 1:
@@ -179,7 +178,7 @@ public class bossBehavior : entity
             switch (side)
             {
                 case 0:
-                    transform.SetPositionAndRotation(new Vector2(player.transform.position.x, player.transform.position.y + camHeight * 0.75f), Quaternion.Euler(0, 0, 0));
+                    transform.SetPositionAndRotation(new Vector2(player.transform.position.x, player.transform.position.y + camHeight), Quaternion.Euler(0, 0, 0));
                     fireShot();
                     break;
                 case 1:
@@ -187,7 +186,7 @@ public class bossBehavior : entity
                     fireShot();
                     break;
                 case 2:
-                    transform.SetPositionAndRotation(new Vector2(player.transform.position.x, player.transform.position.y - camHeight * 0.75f), Quaternion.Euler(0, 0, 180));
+                    transform.SetPositionAndRotation(new Vector2(player.transform.position.x, player.transform.position.y - camHeight), Quaternion.Euler(0, 0, 180));
                     fireShot();
                     break;
                 case 3:

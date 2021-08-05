@@ -3,13 +3,7 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags:
-  - Player Sprite
-  - Player Projectile
-  - Boss Projectile
-  - Boss
-  - Player Child
-  - Background
+  tags: []
   layers:
   - Default
   - TransparentFX
@@ -45,11 +39,8 @@ TagManager:
   - 
   m_SortingLayers:
   - name: Background
-    uniqueID: 41595787
+    uniqueID: 3214710569
     locked: 0
   - name: Default
     uniqueID: 0
-    locked: 0
-  - name: BossFace
-    uniqueID: 3436803455
     locked: 0

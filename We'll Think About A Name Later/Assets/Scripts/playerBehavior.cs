@@ -27,7 +27,7 @@ public class playerBehavior : entity
         }
 
         //var initializations
-        ms = 7;
+        ms = 20; //change back to 7
         hp = 5;
         timeBetweenInputs = 0.1f;
         lastRotateInput = Time.time;
