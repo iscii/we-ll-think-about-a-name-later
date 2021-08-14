@@ -6,22 +6,28 @@ public class bossBehavior : entity
 {
     public static int nClones = 0;
     [HideInInspector] public bool canMove = false;
-    protected int phase = -1;
+    protected int phase = 0;
     protected bool isClone = false;
     int shots, maxShots, shotsPerRotation, side, radius, totalPhases, phase0BounceCount;
     float posY, rotZ, p3rotAngle;
     bool phaseDone, isLeft, changeMaxShot;
+    IEnumerator animRng;
     GameObject player;
+    Animator bossAnimator;
+    Animator faceAnimator;
     public bossBehavior() : base("bossProjectile") { }
+    
     void Start()
     {
         //references
         player = GameObject.FindGameObjectWithTag("Player");
+        bossAnimator = gameObject.GetComponent<Animator>();
+        faceAnimator = gameObject.transform.GetChild(0).gameObject.GetComponent<Animator>();
+        startRng();
 
         //variable initializations
         shotsPerRotation = 8; //basically how many slices in a circle (360 / 8 = 45 degree)
         shotInterval = 0.75f;
-        radius = 10;
         phaseDone = true;
         changeMaxShot = true;
         lastShotTime = Time.time;
@@ -30,13 +36,14 @@ public class bossBehavior : entity
 
         //spawn boss at higher y-axis to initiate showdown
         if(isClone)
-            transform.SetPositionAndRotation(new Vector2(0, camHeight), Quaternion.Euler(0, 0, 0));
-        else
-            transform.position = new Vector2(player.transform.position.x, camHeight + Mathf.Ceil(sr.bounds.size.y / 2));
+            transform.SetPositionAndRotation(new Vector2(player.transform.position.x, player.transform.position.y + camHeight * 1.75f), Quaternion.Euler(0, 0, 0));
+        else {
+            //transform.position = new Vector2(player.transform.position.x, player.transform.position.y + camHeight + Mathf.Ceil(sr.bounds.size.y / 2));
+            transform.position = new Vector2(player.transform.position.x, player.transform.position.y + camHeight * 1.75f);
+        }
     }
 
     //add update and methods
-
     void Update()
     {
         //showdown
@@ -52,7 +59,27 @@ public class bossBehavior : entity
             phaseAwaken();
             phaseInit();
         }
+    }
 
+    //IEnumerator coroutine - basically setInterval; calls code below yield every <3> seconds
+    IEnumerator animationRng(){
+        while(true){
+            yield return new WaitForSeconds(3);
+            //gen num and check
+            int n = (int) Random.Range(0, 2);
+            faceAnimator.SetTrigger("blink");
+            switch(n){
+                case 0:
+                    StopCoroutine(animRng);
+                    bossAnimator.SetTrigger("hoora");
+                break;
+            }
+        }
+    }
+
+    void startRng(){
+        animRng = animationRng();
+        StartCoroutine(animRng);
     }
 
     void phaseAwaken()
@@ -61,28 +88,27 @@ public class bossBehavior : entity
         {
             phase++;
             phaseDone = false;
-            if (phase == 0)
-            {
-                phase0BounceCount = 0;
-                isLeft = Random.Range(0, 1) == 0;
-            }
-            if (phase == 3)
-            {
-                p3rotAngle = startAngle();
-                radius = 13;
-            }
-            if (phase == 4)
-            {
-                radius = 10;
-                //sin of multiples of 90 gives 0, 1, 0, -1. Add 90 to shift the pattern to 1, 0, -1, 0 and multiply by radius to ignore switch statements
-                posY = player.transform.position.y + Mathf.RoundToInt(Mathf.Sin((side + 1) * 90 * Mathf.Deg2Rad)) * radius;
-                rotZ = side * 90;
+            switch(phase){
+                /* case 0:
+                    phase0BounceCount = 0;
+                    isLeft = Random.Range(0, 1) == 0;
+                break; */
+                case 3:
+                    p3rotAngle = startAngle();
+                    radius = 13;
+                break;
+                case 4:
+                    radius = 14;
+                    //sin of multiples of 90 gives 0, 1, 0, -1. Add 90 to shift the pattern to 1, 0, -1, 0 and multiply by radius to ignore switch statements
+                    posY = player.transform.position.y + Mathf.RoundToInt(Mathf.Sin((side + 1) * 90 * Mathf.Deg2Rad)) * radius;
+                    rotZ = side * 90;
+                break;
             }
             if (phase == totalPhases)
             {
-                phase = -1;
+                phase = 0;
                 phaseDone = true;
-                transform.SetPositionAndRotation(new Vector2(0, camHeight), Quaternion.Euler(0, 0, 0));
+                transform.SetPositionAndRotation(new Vector2(player.transform.position.x, player.transform.position.y + camHeight), Quaternion.Euler(0, 0, 0));
 
                 if (!isClone && nClones < 2)
                 {
@@ -100,15 +126,16 @@ public class bossBehavior : entity
     {
         switch (phase)
         {
-            case 0:
+            /* case 0:
+                determineMaxShot(10, 15);
                 phase0(7);
-                break;
+                break; */
             case 1:
-                determineMaxShot(7, 10); //7, 10
+                determineMaxShot(20, 25); //10, 15
                 phase1();
                 break;
             case 2:
-                determineMaxShot(10, 15); //10, 15
+                determineMaxShot(15, 20); //10, 15
                 phase2();
                 break;
             case 3:
@@ -122,14 +149,20 @@ public class bossBehavior : entity
     }
 
     // Starts at the middle, and goes randomly to isLeft or right before traversing the other way, while shooting at the same time
-    private void phase0(int bossMoveSpd)
+    /* private void phase0(float bossMoveSpd)
     {
-        transform.Translate(new Vector2(isLeft ? -1 : 1, 0) * bossMoveSpd * Time.deltaTime);
+        //transform.Translate(new Vector2(isLeft ? -1 : 1, 0) * bossMoveSpd * Time.deltaTime);
+        transform.Translate(new Vector2(transform.position.x < player.transform.position.x ? 1 : -1, transform.position.y - player.transform.position.y < camHeight ? 1 : 0) * bossMoveSpd * Time.deltaTime);
         if (Time.time - lastShotTime >= shotInterval)
         {
             fireShot();
+            shots++;
         }
-        if (phase0BounceCount < 2)
+        if(shots >= maxShots) {
+            finishedPhase();
+            return;
+        }
+        /* if (phase0BounceCount < 2)
         {
             if (Mathf.Abs(transform.position.x) >= camWidth)
             {
@@ -144,8 +177,8 @@ public class bossBehavior : entity
             {
                 phaseDone = true;
             }
-        }
-    }
+        //}
+    } */
 
     //Tracks the player's position and shoot
     private void phase1()
@@ -157,7 +190,7 @@ public class bossBehavior : entity
                 finishedPhase();
                 return;
             }
-            transform.position = new Vector2(player.transform.position.x, camHeight);
+            transform.position = new Vector2(player.transform.position.x, player.transform.position.y + camHeight);
             fireShot();
             shots++;
         }

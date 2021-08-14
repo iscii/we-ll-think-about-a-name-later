@@ -27,7 +27,7 @@ public class projectile : MonoBehaviour
             gameObject.transform.Translate(new Vector2(1, 0) * shotSpeed * Time.deltaTime);
 
         //out of bounds optimization
-        if (Mathf.Abs(gameObject.transform.position.x) > 50 || Mathf.Abs(gameObject.transform.position.y) > 50)
+        if (Mathf.Abs(gameObject.transform.position.x - player.transform.position.x) > 50 || Mathf.Abs(gameObject.transform.position.y - player.transform.position.y) > 50)
             Destroy(gameObject);
     }
 

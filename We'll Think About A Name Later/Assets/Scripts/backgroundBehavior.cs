@@ -8,6 +8,7 @@ public class backgroundBehavior : MonoBehaviour
     static int id = -1;
     static List<Vector3> location = new List<Vector3>();
     GameObject player;
+    GameObject background;
     SpriteRenderer backgroundSR;
     Vector2 sr, playerPos;
     Vector3 pos;
@@ -20,6 +21,7 @@ public class backgroundBehavior : MonoBehaviour
     {
         id++;
         backgroundSR = gameObject.GetComponent<SpriteRenderer>();
+        background = Resources.Load<GameObject>("Prefabs/Background");
         sr = backgroundSR.bounds.size;
         player = GameObject.FindGameObjectWithTag("Player");
         camWidth = player.GetComponent<playerBehavior>().camWidth;
@@ -40,7 +42,7 @@ public class backgroundBehavior : MonoBehaviour
         playerPos = player.transform.position;
         spawnClone();
         despawnClone();
-        changeColor();   
+        //changeColor();   
     }
 
     bool inRange() {
@@ -61,29 +63,29 @@ public class backgroundBehavior : MonoBehaviour
 
     void spawnClone() {
        if(inRange()) {    
-            if(playerPos.x + camWidth >= pos.x + sr.x / 2 - camWidth * 1.25f) {
+            if(playerPos.x + camWidth >= pos.x + sr.x / 2 - camWidth) {
                 Vector3 newPos = new Vector3(pos.x + sr.x, pos.y, pos.z);
                 if(checkLocation(newPos)) {
-                    GameObject clone = Instantiate(gameObject, newPos, transform.rotation);
+                    GameObject clone = Instantiate(background, newPos, transform.rotation);
                 }
             }
-            else if(playerPos.x - camWidth <= pos.x - sr.x / 2 + camWidth * 1.25f) {
+            else if(playerPos.x - camWidth <= pos.x - sr.x / 2 + camWidth) {
                 Vector3 newPos = new Vector3(pos.x - sr.x, pos.y, pos.z);
                 if(checkLocation(newPos)) {
-                    GameObject clone = Instantiate(gameObject, newPos, transform.rotation);
+                    GameObject clone = Instantiate(background, newPos, transform.rotation);
                 }
             }
 
-            if(playerPos.y + camHeight >= pos.y + sr.y / 2 - camHeight * 1.25f) {
+            if(playerPos.y + camHeight >= pos.y + sr.y / 2 - camHeight) {
                 Vector3 newPos = new Vector3(pos.x, pos.y + sr.y, pos.z);
                 if(checkLocation(newPos)) {
-                    GameObject clone = Instantiate(gameObject, newPos, transform.rotation);
+                    GameObject clone = Instantiate(background, newPos, transform.rotation);
                 }
             }
-            else if(playerPos.y - camHeight <= pos.y - sr.y / 2 + camHeight * 1.25f) {
+            else if(playerPos.y - camHeight <= pos.y - sr.y / 2 + camHeight) {
                 Vector3 newPos = new Vector3(pos.x, pos.y - sr.y, pos.z);
                 if(checkLocation(newPos)) {
-                    GameObject clone = Instantiate(gameObject, newPos, transform.rotation);
+                    GameObject clone = Instantiate(background, newPos, transform.rotation);
                 }
             }
         }
@@ -96,8 +98,8 @@ public class backgroundBehavior : MonoBehaviour
         }
     }
 
-    void changeColor() {
-        Debug.Log("here");
+    /* void changeColor() {
+        //Debug.Log("here");
         backgroundSR.color = new Color(colors[1], colors[0], colors[2]);
         if(colors[idx] <= 3 || colors[idx] >= 255) {
             idx++;
@@ -105,5 +107,5 @@ public class backgroundBehavior : MonoBehaviour
             mod = colors[idx] <= 3 ? 1 : -1;
         }
         colors[idx] = colors[idx] + mod;
-    }
+    } */
 }
