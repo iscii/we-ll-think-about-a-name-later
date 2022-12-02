@@ -158,7 +158,8 @@ public class playerBehavior : entity
     {
         hp--;
         hpSR.sprite = hpSprites[hp > 0 ? hp - 1 : 0];
-        if (hp <= 0)
+        if (hp <= 0){
             Debug.Log("You have died"); //not implementing yet for testing purposes
+        }
     }
 }

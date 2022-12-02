@@ -94,6 +94,7 @@ public class backgroundBehavior : MonoBehaviour
     void despawnClone() {
         if(playerPos.x >= pos.x + sr.x * 2 || playerPos.x <= pos.x - sr.x * 2|| playerPos.y >= pos.y + sr.y * 2 || playerPos.y <= pos.y - sr.y * 2) {
             Destroy(gameObject);
+            //there's a bug here. far backgrounds are not despawning.
             location.Remove(new Vector3(pos.x, pos.y, pos.z));
         }
     }
